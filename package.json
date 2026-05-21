@@ -1,0 +1,13 @@
+{
+  "name": "trilogy-forge",
+  "version": "1.0.0",
+  "description": "The Psychological Build Engine — Jung + Freud + Sales 101. Auto-generates elite AI configs calibrated to each client's archetype, shadow, and role psychology.",
+  "main": "index.js",
+  "files": ["index.js", "src/"],
+  "keywords": ["ai", "psychology", "jungian", "archetypes", "sales", "tone-engine", "shadow-engine", "content-strategy", "persona", "calibration"],
+  "author": "sjgant80-hub",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/sjgant80-hub/trilogy-forge" },
+  "homepage": "https://sjgant80-hub.github.io/trilogy-forge/",
+  "engines": { "node": ">=18.0.0" }
+}
