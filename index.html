@@ -1,2066 +1,291 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trilogy Forge — The Psychological Build Engine</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0a0a0a">
+<title>Trilogy Forge · Psychological Build Engine · Jung + Freud + Sales</title>
+<meta name="description" content="Auto-generate AI configs per client archetype, shadow and role psychology. Paste a client brief · get a fully-typed config back.">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Trilogy Forge","short_name":"Forge","start_url":".","display":"standalone","background_color":"#0a0a0a","theme_color":"#d4a017","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 fill=%22%230a0a0a%22/><text x=%2232%22 y=%2244%22 text-anchor=%22middle%22 font-size=%2236%22 fill=%22%23d4a017%22 font-family=%22serif%22 font-weight=%22bold%22>◊</text></svg>","sizes":"any","type":"image/svg+xml"}]}'>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@1,400&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#020202;--surface:rgba(255,255,255,.025);--surface2:rgba(255,255,255,.04);
-  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.12);
-  --text:#e8e8e8;--muted:rgba(255,255,255,.4);--dim:rgba(255,255,255,.18);
-  --red:#dc2626;--gold:#d4a017;--violet:#7c3aed;--emerald:#059669;--rose:#e11d48;--sky:#0284c7;
-  --glow-red:rgba(220,38,38,.08);--glow-gold:rgba(212,160,23,.08);--glow-violet:rgba(124,58,237,.08);
-}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
-.w{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root { --bg: #0a0a0a; --surface: #141414; --surface-2: #1a1a18; --border: #1a1a1a; --text: #e8e6e3; --muted: #888; --gold: #d4a017; --amber: #e8a012; --success: #44aa44; --danger: #cc3333; --info: #6a9aff; --max: 1080px; }
+html, body { background: var(--bg); color: var(--text); font: 16px/1.7 'DM Mono', ui-monospace, monospace; min-height: 100dvh; -webkit-font-smoothing: antialiased; }
+body { overflow-x: hidden; }
+::selection { background: var(--gold); color: #0a0a0a; }
+a { color: inherit; text-decoration: none; transition: color 0.2s; } a:hover { color: var(--gold); }
+h1 { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; line-height: 1.05; letter-spacing: -0.025em; }
+h2 { font-family: 'Syne', system-ui, sans-serif; font-weight: 800; letter-spacing: -0.01em; line-height: 1.1; }
+h3 { font-family: 'Syne', system-ui, sans-serif; font-weight: 700; }
+header { position: sticky; top: 0; padding: 14px 24px; background: rgba(10, 10, 10, 0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); z-index: 100; }
+.nav { max-width: var(--max); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark { font-family: 'Playfair Display'; font-weight: 800; color: var(--gold); font-size: 26px; }
+.brand-name { font-family: 'Syne'; font-weight: 800; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+.brand-name b { color: var(--gold); }
+.nav-cta { font-family: 'Syne'; font-weight: 700; padding: 9px 16px; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-size: 12px; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+.nav-cta:hover { background: var(--gold); color: #0a0a0a; }
+section { padding: 80px 24px; max-width: var(--max); margin: 0 auto; }
+@media (max-width: 720px) { section { padding: 60px 18px; } }
+.hero { padding: 140px 24px 80px; }
+.hero h1 { font-size: clamp(40px, 6vw, 64px); margin-bottom: 24px; }
+.hero h1 em { font-style: italic; color: var(--gold); }
+.hero .lede { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: clamp(20px, 2.2vw, 26px); color: var(--text); max-width: 680px; line-height: 1.5; margin-bottom: 32px; }
+.hero .ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn { font-family: 'Syne'; font-weight: 700; padding: 14px 24px; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; text-decoration: none; border: 1px solid var(--gold); display: inline-block; }
+.btn-primary { background: var(--gold); color: #0a0a0a; }
+.btn-primary:hover { background: var(--amber); border-color: var(--amber); }
+.btn-secondary { background: transparent; color: var(--text); border-color: var(--text); }
+.btn-secondary:hover { color: var(--gold); border-color: var(--gold); }
+.section-label { font-family: 'Syne'; font-weight: 700; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+.section-line { width: 60px; height: 1px; background: var(--gold); margin-bottom: 18px; }
+section h2 { font-size: clamp(30px, 4vw, 44px); margin-bottom: 16px; }
+section p.lede { font-family: 'Cormorant Garamond'; font-style: italic; font-size: 20px; color: var(--muted); margin-bottom: 32px; max-width: 700px; }
 
-/* Aura */
-.aura{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden}
-.aura-orb{position:absolute;border-radius:50%;filter:blur(180px);opacity:.05}
-.aura-orb:nth-child(1){width:800px;height:800px;background:var(--red);top:-300px;left:-200px;animation:drift 30s ease-in-out infinite}
-.aura-orb:nth-child(2){width:600px;height:600px;background:var(--gold);bottom:-200px;right:-200px;animation:drift 25s ease-in-out infinite reverse}
-.aura-orb:nth-child(3){width:500px;height:500px;background:var(--violet);top:40%;left:50%;animation:drift 20s ease-in-out infinite 5s}
-@keyframes drift{0%,100%{transform:translate(0,0)}33%{transform:translate(60px,-80px)}66%{transform:translate(-40px,60px)}}
+.archetypes { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 24px 0; }
+.archetype { background: var(--surface); padding: 22px 18px; transition: all 0.2s; }
+.archetype:hover { background: var(--surface-2); }
+.archetype .icon { font-family: 'Playfair Display'; color: var(--gold); font-size: 32px; line-height: 1; margin-bottom: 10px; }
+.archetype .name { font-family: 'Syne'; font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 6px; }
+.archetype .what { color: var(--muted); font-size: 12px; line-height: 1.6; }
 
-/* Torus nav */
-.torus-nav{background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);position:sticky;top:0;z-index:100}
-.torus-nav .inner{max-width:1100px;margin:0 auto;padding:8px 24px;display:flex;align-items:center;justify-content:space-between}
-.torus-nav .label{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
-.torus-nav .links{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
-.torus-nav .links a{font-size:12px;font-weight:500;color:var(--muted);text-decoration:none}
-.torus-nav .links a.active{color:var(--gold);font-weight:600;border-bottom:2px solid var(--gold)}
-.torus-nav .sep{color:var(--border);font-size:10px}
+.field { margin-bottom: 16px; }
+.field label { font-family: 'Syne'; font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 8px; }
+.field input, .field textarea, .field select { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; font-family: 'DM Mono'; font-size: 14px; line-height: 1.6; }
+.field input:focus, .field textarea:focus, .field select:focus { outline: 1px solid var(--gold); outline-offset: -1px; }
+.field textarea { min-height: 100px; resize: vertical; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+.demo-panel { background: var(--surface); border: 1px solid var(--border); padding: 28px; margin: 20px 0; }
+.demo-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+.tier-badge { font-family: 'DM Mono'; font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; padding-left: 8px; }
+.tier-badge.t3 { color: var(--gold); }
+.demo-output { margin-top: 20px; padding: 18px; background: var(--bg); border-left: 2px solid var(--gold); font-family: 'DM Mono'; font-size: 13px; line-height: 1.7; display: none; }
+.demo-output.show { display: block; }
+.demo-output pre { white-space: pre-wrap; word-break: break-word; }
+.demo-output.error { border-left-color: var(--danger); color: var(--danger); }
 
-/* Hero */
-.hero{padding:100px 0 60px;text-align:center}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;border:1px solid rgba(212,160,23,.2);background:rgba(212,160,23,.04);font-size:11px;color:var(--gold);margin-bottom:28px;letter-spacing:.08em;font-weight:600;text-transform:uppercase}
-h1{font-family:'Instrument Serif',serif;font-size:clamp(42px,7vw,80px);font-weight:400;line-height:1.05;letter-spacing:-1px;margin-bottom:20px}
-h1 em{font-style:italic;background:linear-gradient(135deg,var(--red),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-p{font-size:18px;color:var(--muted);max-width:620px;margin:0 auto 40px;line-height:1.65;font-weight:400}
-.hero-p strong{color:var(--text);font-weight:600}
-
-/* Layers diagram */
-.layers{display:flex;align-items:center;justify-content:center;gap:0;margin:0 auto 60px;max-width:700px}
-.layer{flex:1;padding:18px 12px;text-align:center;border:1px solid var(--border);position:relative}
-.layer:first-child{border-radius:12px 0 0 12px}
-.layer:last-child{border-radius:0 12px 12px 0}
-.layer .lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
-.layer .val{font-size:13px;color:var(--muted);font-weight:400}
-.layer.id{background:var(--glow-red)}.layer.id .lbl{color:var(--red)}
-.layer.ego{background:var(--glow-gold)}.layer.ego .lbl{color:var(--gold)}
-.layer.superego{background:var(--glow-violet)}.layer.superego .lbl{color:var(--violet)}
-.layer-arrow{color:var(--dim);font-size:18px;margin:0 -1px;z-index:2}
-
-/* Code demo */
-.demo{background:rgba(0,0,0,.6);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:100px;backdrop-filter:blur(20px)}
-.demo-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
-.demo-dot{width:10px;height:10px;border-radius:50%}
-.demo-dot.r{background:#ff5f57}.demo-dot.y{background:#febc2e}.demo-dot.g{background:#28c840}
-.demo-title{font-size:11px;color:var(--dim);margin-left:8px;font-family:'JetBrains Mono',monospace}
-.demo pre{padding:24px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;overflow-x:auto}
-.c-k{color:var(--violet)}.c-s{color:var(--emerald)}.c-f{color:var(--sky)}.c-cm{color:var(--dim)}.c-n{color:var(--gold)}.c-r{color:var(--red)}.c-m{color:var(--muted)}
-
-/* Sections */
-.section{margin-bottom:100px}
-.section-title{text-align:center;margin-bottom:48px}
-.section-title h2{font-family:'Instrument Serif',serif;font-size:36px;font-weight:400;margin-bottom:8px}
-.section-title p{color:var(--muted);font-size:16px}
-
-/* Archetype grid */
-.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-.arch-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .3s}
-.arch-card:hover{border-color:rgba(212,160,23,.25);transform:translateY(-2px)}
-.arch-name{font-family:'Instrument Serif',serif;font-size:18px;margin-bottom:4px}
-.arch-desire{font-size:12px;color:var(--gold);margin-bottom:8px;font-weight:500}
-.arch-shadow{font-size:11px;color:var(--muted);line-height:1.5;font-style:italic}
-.arch-shadow::before{content:'"';color:var(--red)}
-.arch-shadow::after{content:'"';color:var(--red)}
-
-/* Tone bars */
-.tone-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.tone-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px}
-.tone-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:8px}
-.tone-track{height:4px;background:rgba(255,255,255,.06);border-radius:2px;position:relative}
-.tone-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--red),var(--gold));position:absolute;left:0;top:0;transition:width 1s ease}
-.tone-marker{position:absolute;top:-4px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);transition:left 1s ease}
-
-/* Sales frameworks */
-.sales-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
-.sales-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .3s}
-.sales-card:hover{border-color:rgba(220,38,38,.2)}
-.sales-name{font-weight:700;font-size:15px;margin-bottom:2px}
-.sales-origin{font-size:11px;color:var(--dim);margin-bottom:10px}
-.sales-desc{font-size:13px;color:var(--muted);line-height:1.6}
-.sales-tag{display:inline-block;font-size:9px;padding:3px 8px;border-radius:5px;font-weight:700;letter-spacing:.06em;margin-top:10px}
-.sales-tag.struct{background:rgba(124,58,237,.1);color:var(--violet);border:1px solid rgba(124,58,237,.2)}
-.sales-tag.psych{background:rgba(220,38,38,.1);color:var(--red);border:1px solid rgba(220,38,38,.2)}
-
-/* Shadow profiles */
-.shadow-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.shadow-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .3s}
-.shadow-card:hover{border-color:rgba(220,38,38,.2)}
-.shadow-role{font-weight:700;font-size:15px;margin-bottom:10px}
-.shadow-layer{margin-bottom:8px}
-.shadow-layer-name{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
-.shadow-layer-name.id-l{color:var(--red)}
-.shadow-layer-name.ego-l{color:var(--gold)}
-.shadow-layer-name.super-l{color:var(--violet)}
-.shadow-layer p{font-size:12px;color:var(--muted);line-height:1.5}
-.shadow-gap{font-size:12px;color:var(--rose);font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.5}
-
-/* Footer */
-footer{border-top:1px solid var(--border);padding:40px 0;text-align:center}
-footer p{color:var(--dim);font-size:13px}
-footer a{color:var(--muted);text-decoration:none;transition:color .2s}
-footer a:hover{color:var(--text)}
-.footer-links{display:flex;justify-content:center;gap:20px;margin:12px 0;flex-wrap:wrap}
-
-@media(max-width:768px){
-  .layers{flex-direction:column}
-  .layer:first-child{border-radius:12px 12px 0 0}
-  .layer:last-child{border-radius:0 0 12px 12px}
-  .tone-grid{grid-template-columns:1fr}
-}
+pre { background: var(--surface-2); padding: 18px 22px; overflow-x: auto; font-family: 'DM Mono'; font-size: 13px; line-height: 1.6; border-left: 2px solid var(--gold); margin-bottom: 22px; }
+footer { background: #060606; border-top: 1px solid var(--border); padding: 48px 24px 36px; }
+.foot { max-width: var(--max); margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 24px; font-family: 'DM Mono'; font-size: 12px; color: var(--muted); }
+footer a { color: var(--gold); }
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #0a0a0a; padding: 12px 22px; font-family: 'Syne'; font-weight: 700; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; z-index: 200; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+.note { font-family: 'Cormorant Garamond'; font-style: italic; color: var(--muted); font-size: 14px; line-height: 1.5; margin: 12px 0 0; }
 </style>
 </head>
 <body>
 
-<div class="aura">
-  <div class="aura-orb"></div>
-  <div class="aura-orb"></div>
-  <div class="aura-orb"></div>
-</div>
-
-<!-- Torus Nav -->
-<div class="torus-nav">
-<div class="inner">
-  <span class="label">Trilogy Ecosystem</span>
-  <div class="links">
-    <a href="https://sjgant80-hub.github.io/docmind-api/">DocMind</a>
-    <a href="https://sjgant80-hub.github.io/deep-api/">Deep</a>
-    <a href="https://sjgant80-hub.github.io/flux-api/">Flux</a>
-    <span class="sep">|</span>
-    <a href="https://sjgant80-hub.github.io/trilogy-sdk/">SDK</a>
-    <a href="https://sjgant80-hub.github.io/trilogy-framework/">Framework</a>
-    <a href="https://sjgant80-hub.github.io/trilogy-forge/" class="active">Forge</a>
-    <a href="https://sjgant80-hub.github.io/fallcube-api/">Cube</a>
-    <span class="sep">|</span>
-    <a href="https://sjgant80-hub.github.io/fallmesh/" style="color:#00d4aa">◊ Mesh</a>
+<header>
+  <div class="nav">
+    <a href="#top" class="brand"><div class="brand-mark">◊</div><div class="brand-name">Trilogy <b>Forge</b></div></a>
+    <a href="https://www.ai-nativesolutions.com" class="nav-cta">← Hub</a>
   </div>
-</div>
-</div>
+</header>
 
-<!-- Hero -->
-<div class="w">
-<div class="hero">
-  <div class="hero-eyebrow">Jung + Freud + Sales 101</div>
-  <h1>Normal AI reads the brief.<br><em>The Forge reads the buyer.</em></h1>
-  <p>Client spec in. <strong>Psychologically calibrated AI config out.</strong> 12 Jungian archetypes, Freudian shadow analysis, 16-dimension tone engine, and proven sales frameworks — auto-assembled for each client's role.</p>
+<main id="top">
 
-  <div class="layers">
-    <div class="layer id">
-      <div class="lbl">Id</div>
-      <div class="val">What they secretly want</div>
+<section class="hero">
+  <h1>The Psychological<br><em>Build Engine.</em></h1>
+  <p class="lede">Most AI tools treat every user the same. The Forge starts from the question: which psychological archetype is this person, and what shadow are they avoiding? Then it generates the config.</p>
+  <div class="ctas">
+    <a href="#try" class="btn btn-primary">Forge a config</a>
+    <a href="https://github.com/sjgant80-hub/trilogy-forge" target="_blank" class="btn btn-secondary">Source</a>
+  </div>
+</section>
+
+<section>
+  <div class="section-line"></div>
+  <div class="section-label">§ I · the archetypes</div>
+  <h2>Eight archetypes. One sale.</h2>
+  <p class="lede">Jung's archetype map · adapted for B2B configuration. Each implies different copy, different UI emphasis, different default behaviours.</p>
+  <div class="archetypes">
+    <div class="archetype"><div class="icon">◇</div><div class="name">Ruler</div><div class="what">control · status · best-of-class</div></div>
+    <div class="archetype"><div class="icon">◈</div><div class="name">Creator</div><div class="what">vision · craft · authentic expression</div></div>
+    <div class="archetype"><div class="icon">◉</div><div class="name">Sage</div><div class="what">truth · understanding · analysis</div></div>
+    <div class="archetype"><div class="icon">◊</div><div class="name">Outlaw</div><div class="what">rebellion · sovereignty · disruption</div></div>
+    <div class="archetype"><div class="icon">◐</div><div class="name">Hero</div><div class="what">mastery · grit · proving it</div></div>
+    <div class="archetype"><div class="icon">◑</div><div class="name">Caregiver</div><div class="what">service · protection · empathy</div></div>
+    <div class="archetype"><div class="icon">◒</div><div class="name">Explorer</div><div class="what">freedom · autonomy · the next thing</div></div>
+    <div class="archetype"><div class="icon">◓</div><div class="name">Magician</div><div class="what">transformation · vision · the impossible</div></div>
+  </div>
+</section>
+
+<section id="try">
+  <div class="section-line"></div>
+  <div class="section-label">§ II · forge a config</div>
+  <h2>Paste a client brief. Get the archetype-tuned config.</h2>
+  <p class="lede">Paste anything you know about the client · their site · their LinkedIn · their wants. The Forge profiles them and emits a config you can drop into any Fall* tool.</p>
+
+  <div class="demo-panel">
+    <div class="field-row">
+      <div class="field">
+        <label>Provider</label>
+        <select id="provider">
+          <option value="gemini">Gemini 2.0 Flash (free)</option>
+          <option value="anthropic">Anthropic Claude Haiku 4.5</option>
+          <option value="openai">OpenAI GPT-4o-mini</option>
+          <option value="openrouter">OpenRouter</option>
+        </select>
+      </div>
+      <div class="field"><label>API key</label><input id="apiKey" type="password" placeholder="paste · stays on device"></div>
     </div>
-    <div class="layer ego">
-      <div class="lbl">Ego</div>
-      <div class="val">What they say they want</div>
+
+    <div class="field">
+      <label>Client brief · paste anything you know</label>
+      <textarea id="brief" placeholder='e.g. "Ivan Petrov — UK builder, sole trader, 12 years on tools, prefers to do business by handshake. Hates SaaS. His current tool is paper and a shoebox of receipts. Wants accounts done without an accountant. Doesn\'t trust the cloud."' style="min-height:140px"></textarea>
     </div>
-    <div class="layer superego">
-      <div class="lbl">Superego</div>
-      <div class="val">What they should want</div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Target tool to configure</label>
+        <select id="tool">
+          <option value="fallaccount-trades">FallAccount Trades</option>
+          <option value="fallforce">FallForce CRM</option>
+          <option value="fallgravity">FallGravity</option>
+          <option value="fallmap">FallMap</option>
+          <option value="fallform">FallForm</option>
+          <option value="gymos">GymOS</option>
+          <option value="generic">Generic sovereign HTML tool</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tier</label>
+        <select id="tier">
+          <option value="lite">Lite ($997)</option>
+          <option value="pro">Pro ($2,500)</option>
+          <option value="enterprise">Enterprise ($10,000+)</option>
+        </select>
+      </div>
     </div>
-  </div>
-</div>
 
-<!-- Code Demo -->
-<div class="demo">
-  <div class="demo-bar">
-    <div class="demo-dot r"></div><div class="demo-dot y"></div><div class="demo-dot g"></div>
-    <span class="demo-title">forge.build() — auto-calibrate from client spec</span>
+    <div class="demo-controls">
+      <button class="btn btn-primary" onclick="forgeConfig()">⇶ Forge it</button>
+      <span class="tier-badge" id="tierBadge">paste key to begin</span>
+    </div>
+    <div class="demo-output" id="forgeOut"></div>
   </div>
-  <pre><span class="c-k">const</span> { Forge } = <span class="c-f">require</span>(<span class="c-s">'trilogy-forge'</span>);
-<span class="c-k">const</span> forge = <span class="c-k">new</span> <span class="c-f">Forge</span>();
+</section>
 
-<span class="c-cm">// Give it a client spec — it reads the psychology</span>
-<span class="c-k">const</span> build = forge.<span class="c-f">build</span>({
-  role:     <span class="c-s">'CTO'</span>,
-  industry: <span class="c-s">'fintech'</span>,
-  company:  <span class="c-s">'Revolut'</span>,
-  product:  <span class="c-s">'Document parsing API'</span>,
-  goals:    <span class="c-s">'Developer adoption, technical credibility'</span>,
-  audience: <span class="c-s">'Senior engineers evaluating API tools'</span>,
-});
+<section>
+  <div class="section-line"></div>
+  <div class="section-label">§ III · what comes back</div>
+  <h2>A typed config · ready to ship.</h2>
+  <pre>{
+  "archetype": "Outlaw",
+  "shadow":    "the part of him that wants to be respected as a craftsman, not patronised",
+  "voice":     "direct · no-bs · uses British colloquialisms · doesn't apologise",
+  "ui": {
+    "palette":      "dark default · amber accent",
+    "first_screen": "Drop your first receipt · no setup wizard",
+    "empty_state":  "warm not corporate"
+  },
+  "copy": {
+    "hero":   "Your accounts. Without an accountant.",
+    "tagline":"For tradies who'd rather be working than logging in.",
+    "cta":    "Open it · no signup"
+  },
+  "agents": [...],
+  "defaults": { "cis_mode": "subcontractor", "vat": "none", "mtd": true },
+  "delivery": "one HTML · 24h turnaround · branded GitHub repo"
+}</pre>
+  <p class="note">Drop this into FallAccount Trades client-config and the whole tool tunes itself · copy · defaults · agent prompts.</p>
+</section>
 
-<span class="c-cm">// What you get back:</span>
-build.archetype.primary     <span class="c-cm">// { name: "The Sage", desire: "Truth and understanding" }</span>
-build.shadow.shadow_gap     <span class="c-cm">// "They say they want enterprise reliability,</span>
-                            <span class="c-cm">//  but they secretly want something that excites</span>
-                            <span class="c-cm">//  their engineering soul."</span>
+<section>
+  <div class="section-line"></div>
+  <div class="section-label">§ IV · pricing</div>
+  <h2>Free to forge. Paid to ship.</h2>
+  <p class="lede">The Forge runs in this browser using your LLM key — sovereign, no rent. The output config is yours to drop into any client build. Need it actually shipped?</p>
+  <p>Lite ($997) · Pro ($2,500) · Enterprise ($10k+) · <a href="https://www.linkedin.com/in/simon-gant-295b56180/" style="color:var(--gold)" target="_blank">Talk to Simon</a>.</p>
+</section>
 
-build.tone.profile          <span class="c-cm">// { formality: 0.9, technicality: 0.9, humor: 0.0, ... }</span>
-build.tone.description      <span class="c-cm">// "formal, confident, authoritative, technical"</span>
+</main>
 
-build.sales.primary_framework  <span class="c-cm">// "SPIN Selling"</span>
-build.sales.triggers           <span class="c-cm">// ["Authority Principle", "Loss Aversion"]</span>
-
-build.system_prompt         <span class="c-cm">// Full system prompt — ready to paste into any LLM</span>
-build.content_strategy      <span class="c-cm">// Opening strategy, words to use, words to avoid</span>
-build.pipeline_config       <span class="c-cm">// Trilogy framework config: tone, quality, content types</span></pre>
-</div>
-
-<!-- 12 Archetypes -->
-<div class="section">
-<div class="section-title">
-  <h2>12 Jungian Archetypes</h2>
-  <p>Each buyer maps to a universal psychological pattern. The Forge detects it.</p>
-</div>
-<div class="arch-grid">
-  <div class="arch-card"><div class="arch-name">The Ruler</div><div class="arch-desire">Control and order</div><div class="arch-shadow">Controlling others to mask insecurity about losing grip</div></div>
-  <div class="arch-card"><div class="arch-name">The Sage</div><div class="arch-desire">Truth and understanding</div><div class="arch-shadow">Using knowledge as a weapon, analysis paralysis</div></div>
-  <div class="arch-card"><div class="arch-name">The Hero</div><div class="arch-desire">Prove worth through mastery</div><div class="arch-shadow">Needing to always be the savior, burnout</div></div>
-  <div class="arch-card"><div class="arch-name">The Creator</div><div class="arch-desire">Enduring value</div><div class="arch-shadow">Nothing is ever good enough, paralysis before shipping</div></div>
-  <div class="arch-card"><div class="arch-name">The Explorer</div><div class="arch-desire">Freedom to discover</div><div class="arch-shadow">Perpetual wandering without commitment</div></div>
-  <div class="arch-card"><div class="arch-name">The Caregiver</div><div class="arch-desire">Protect others</div><div class="arch-shadow">Giving until depleted, guilt as leverage</div></div>
-  <div class="arch-card"><div class="arch-name">The Magician</div><div class="arch-desire">Transformation</div><div class="arch-shadow">Using system knowledge to manipulate</div></div>
-  <div class="arch-card"><div class="arch-name">The Rebel</div><div class="arch-desire">Revolution</div><div class="arch-shadow">Rebellion without purpose, chaos for its own sake</div></div>
-  <div class="arch-card"><div class="arch-name">The Lover</div><div class="arch-desire">Intimacy and connection</div><div class="arch-shadow">People-pleasing at cost of truth</div></div>
-  <div class="arch-card"><div class="arch-name">The Jester</div><div class="arch-desire">Live in the moment</div><div class="arch-shadow">Using humor to deflect, avoiding depth</div></div>
-  <div class="arch-card"><div class="arch-name">The Everyperson</div><div class="arch-desire">Belonging</div><div class="arch-shadow">Losing individual identity, becoming a victim</div></div>
-  <div class="arch-card"><div class="arch-name">The Innocent</div><div class="arch-desire">Safety and happiness</div><div class="arch-shadow">Refusing to see problems, toxic positivity</div></div>
-</div>
-</div>
-
-<!-- Shadow Profiles -->
-<div class="section">
-<div class="section-title">
-  <h2>Shadow Profiles</h2>
-  <p>What each role says vs. what they mean vs. what they fear</p>
-</div>
-<div class="shadow-grid">
-  <div class="shadow-card">
-    <div class="shadow-role">CEO / Founder</div>
-    <div class="shadow-layer"><div class="shadow-layer-name id-l">Id (desire)</div><p>Legacy. To build something that mattered.</p></div>
-    <div class="shadow-layer"><div class="shadow-layer-name ego-l">Ego (stated)</div><p>Growth, market share, revenue targets.</p></div>
-    <div class="shadow-layer"><div class="shadow-layer-name super-l">Superego (duty)</div><p>Responsible stewardship of stakeholders.</p></div>
-    <div class="shadow-gap">Shadow gap: They say data-driven, but want validation their instinct is right.</div>
-  </div>
-  <div class="shadow-card">
-    <div class="shadow-role">CTO / VP Engineering</div>
-    <div class="shadow-layer"><div class="shadow-layer-name id-l">Id (desire)</div><p>Building systems so clean they feel like art.</p></div>
-    <div class="shadow-layer"><div class="shadow-layer-name ego-l">Ego (stated)</div><p>Reliability, scalability, developer experience.</p></div>
-    <div class="shadow-layer"><div class="shadow-layer-name super-l">Superego (duty)</div><p>Protecting the team from bad tooling decisions.</p></div>
-    <div class="shadow-gap">Shadow gap: They say enterprise reliability, but secretly want engineering beauty.</div>
-  </div>
-  <div class="shadow-card">
-    <div class="shadow-role">CMO / Marketing VP</div>
-    <div class="shadow-layer"><div class="shadow-layer-name id-l">Id (desire)</div><p>Creating something people actually talk about.</p></div>
-    <div class="shadow-layer"><div class="shadow-layer-name ego-l">Ego (stated)</div><p>Brand awareness, lead gen, conversion rates.</p></div>
-    <div class="shadow-layer"><div class="shadow-layer-name super-l">Superego (duty)</div><p>Protecting brand integrity and consistency.</p></div>
-    <div class="shadow-gap">Shadow gap: They say measurable ROI, but crave creative recognition from peers.</div>
-  </div>
-  <div class="shadow-card">
-    <div class="shadow-role">Startup Founder</div>
-    <div class="shadow-layer"><div class="shadow-layer-name id-l">Id (desire)</div><p>Proving everyone wrong. Building the impossible.</p></div>
-    <div class="shadow-layer"><div class="shadow-layer-name ego-l">Ego (stated)</div><p>Speed to market, cost efficiency, differentiation.</p></div>
-    <div class="shadow-layer"><div class="shadow-layer-name super-l">Superego (duty)</div><p>Not wasting investor money. Building real value.</p></div>
-    <div class="shadow-gap">Shadow gap: They say enterprise features, but need to ship by Friday.</div>
-  </div>
-</div>
-</div>
-
-<!-- Sales Frameworks -->
-<div class="section">
-<div class="section-title">
-  <h2>Sales Psychology</h2>
-  <p>Proven frameworks auto-selected per client psychology</p>
-</div>
-<div class="sales-grid">
-  <div class="sales-card">
-    <div class="sales-name">SPIN Selling</div>
-    <div class="sales-origin">Rackham, 1988</div>
-    <div class="sales-desc">Situation &rarr; Problem &rarr; Implication &rarr; Need-Payoff. Consultative. Let them conclude the product is the answer.</div>
-    <span class="sales-tag struct">STRUCTURAL</span>
-  </div>
-  <div class="sales-card">
-    <div class="sales-name">Challenger Sale</div>
-    <div class="sales-origin">Dixon & Adamson, 2011</div>
-    <div class="sales-desc">Teach &rarr; Tailor &rarr; Take Control. Lead with an insight they didn't know. Reframe their problem.</div>
-    <span class="sales-tag struct">STRUCTURAL</span>
-  </div>
-  <div class="sales-card">
-    <div class="sales-name">Loss Aversion</div>
-    <div class="sales-origin">Kahneman & Tversky, 1979</div>
-    <div class="sales-desc">Losses feel 2x stronger than gains. Frame around what they lose by NOT acting.</div>
-    <span class="sales-tag psych">PSYCHOLOGICAL</span>
-  </div>
-  <div class="sales-card">
-    <div class="sales-name">Anchoring Effect</div>
-    <div class="sales-origin">Tversky & Kahneman, 1974</div>
-    <div class="sales-desc">First number = reference point. Lead with the big cost, then show how small the solution is.</div>
-    <span class="sales-tag psych">PSYCHOLOGICAL</span>
-  </div>
-  <div class="sales-card">
-    <div class="sales-name">PAS Framework</div>
-    <div class="sales-origin">Classic direct response</div>
-    <div class="sales-desc">Problem &rarr; Agitate &rarr; Solve. Name the pain, twist the knife, present the relief.</div>
-    <span class="sales-tag struct">STRUCTURAL</span>
-  </div>
-  <div class="sales-card">
-    <div class="sales-name">Social Proof</div>
-    <div class="sales-origin">Cialdini, 1984</div>
-    <div class="sales-desc">People follow similar others. Reference who else uses it. Peer validation > features.</div>
-    <span class="sales-tag psych">PSYCHOLOGICAL</span>
-  </div>
-</div>
-</div>
-
-<!-- 16 Tone Dimensions -->
-<div class="section">
-<div class="section-title">
-  <h2>16 Tone Dimensions</h2>
-  <p>Normal AI has one dial. The Forge has sixteen.</p>
-</div>
-<div class="tone-grid" id="toneGrid"></div>
-</div>
-
-</div>
-
-<!-- Footer -->
 <footer>
-<div class="w">
-  <p>trilogy-forge &mdash; The Psychological Build Engine</p>
-  <div class="footer-links">
-    <a href="https://sjgant80-hub.github.io/docmind-api/" style="color:var(--sky)">DocMind</a>
-    <a href="https://sjgant80-hub.github.io/deep-api/" style="color:var(--violet)">Deep</a>
-    <a href="https://sjgant80-hub.github.io/flux-api/" style="color:var(--gold)">Flux</a>
-    <a href="https://sjgant80-hub.github.io/trilogy-sdk/">SDK</a>
-    <a href="https://sjgant80-hub.github.io/trilogy-framework/">Framework</a>
-    <a href="https://sjgant80-hub.github.io/fallcube-api/">Cube</a>
-    <a href="https://github.com/sjgant80-hub/trilogy-forge">GitHub</a>
-    <a href="https://sjgant80-hub.github.io/fallmesh/" style="color:#00d4aa">◊ Mesh</a>
+  <div class="foot">
+    <div>◊·κ=1 · Trilogy Forge · v1.0 · sovereign · Jung + Freud + Sales</div>
+    <div><a href="https://www.ai-nativesolutions.com">AI Native Solutions</a> · <a href="https://github.com/sjgant80-hub/trilogy-forge">GitHub</a></div>
   </div>
-  <p style="font-size:11px;color:var(--dim);margin-top:12px">Part of the <a href="https://sjgant80-hub.github.io/trilogy-framework/" style="color:var(--gold)">Trilogy</a> ecosystem &mdash; Input &rarr; Intelligence &rarr; Output</p>
-  <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)">
-    <p style="font-family:'JetBrains Mono','Geist Mono','Consolas',monospace;font-size:9px;letter-spacing:2px;color:rgba(212,168,67,.6);margin-bottom:6px">&#9674; POWERED BY KONOMI ARCHITECTURE &middot; &phi;&middot;&kappa;=1</p>
-    <p style="font-size:11px"><a href="https://aicraftspeopleguild.github.io/" target="_blank" style="color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s">&#9874; Member of the <span style="text-decoration:underline;text-underline-offset:3px">AI Craftspeople Guild</span></a></p>
-  </div>
-</div>
 </footer>
 
+<div class="toast" id="toast">·</div>
+
 <script>
-// Render tone dimension bars
-const dims = [
-  ['Casual','Formal',0.7],['Tentative','Commanding',0.85],
-  ['Cold','Warm',0.45],['Simple','Complex',0.65],
-  ['Slow','Punchy',0.6],['Peer','Authority',0.8],
-  ['Logical','Emotional',0.35],['Indirect','Direct',0.85],
-  ['Serious','Witty',0.2],['Relaxed','Urgent',0.5],
-  ['Mass','Elite',0.7],['Layperson','Technical',0.75],
-  ['Grounded','Visionary',0.6],['Guarded','Vulnerable',0.15],
-  ['Safe','Provocative',0.3],['Factual','Narrative',0.4],
-];
-const grid = document.getElementById('toneGrid');
-dims.forEach(([left,right,val]) => {
-  const bar = document.createElement('div');
-  bar.className = 'tone-bar';
-  bar.innerHTML = `
-    <div class="tone-label"><span>${left}</span><span>${right}</span></div>
-    <div class="tone-track">
-      <div class="tone-fill" style="width:${val*100}%"></div>
-      <div class="tone-marker" style="left:calc(${val*100}% - 6px)"></div>
-    </div>`;
-  grid.appendChild(bar);
-});
-</script>
-<!-- ◊·κ FALLMESH SHIM — sovereign mesh wiring (generic, drop-in) -->
-<script>
-(function fallmeshShim(){
-  // Identity — each tool defines these. Defaults safe.
-  var NODE = window.NODE || {
-    id: (document.title || 'node').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,16) || 'node',
-    name: document.title || 'Node',
-    prime: 167
-  };
-  window.NODE = NODE;
+'use strict';
+const STORE = 'trilogy-forge-state';
+let state = { provider: 'gemini', apiKey: '' };
+try { const raw = localStorage.getItem(STORE); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch (e) {}
+function saveState() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._to); t._to = setTimeout(() => t.classList.remove('show'), 1800); }
+function escHTML(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-  var meshChannel = null;
-  function meshPost(type, data){
-    if (!meshChannel) return;
-    try {
-      meshChannel.postMessage(Object.assign(
-        { type: type, from: NODE.id, prime: NODE.prime, name: NODE.name, t: Date.now() },
-        data || {}
-      ));
-    } catch(e){}
+document.getElementById('provider').value = state.provider;
+document.getElementById('apiKey').value = state.apiKey;
+document.getElementById('provider').addEventListener('change', e => { state.provider = e.target.value; saveState(); updateTierBadge(); });
+document.getElementById('apiKey').addEventListener('input', e => { state.apiKey = e.target.value.trim(); saveState(); updateTierBadge(); });
+function updateTierBadge() { const ready = !!state.apiKey; const el = document.getElementById('tierBadge'); el.textContent = ready ? 'T3 · ' + state.provider + ' ready' : 'paste key to begin'; el.classList.toggle('t3', ready); }
+updateTierBadge();
+
+async function callLLM(prompt, maxTokens) {
+  maxTokens = maxTokens || 1500;
+  const k = state.apiKey;
+  if (!k) throw new Error('Paste an API key first');
+  const p = state.provider;
+  if (p === 'anthropic') {
+    const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': k, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body: JSON.stringify({ model: 'claude-haiku-4-5', max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] }) });
+    const d = await r.json(); if (!r.ok) throw new Error(d.error?.message || 'Anthropic error');
+    return d.content?.[0]?.text || '';
   }
-  if (typeof BroadcastChannel === 'undefined') return;
-  try { meshChannel = new BroadcastChannel('fallmesh'); } catch(e){ return; }
-
-  window.fallmesh = {
-    post: meshPost,
-    emit: function(data){ meshPost(NODE.id + ':event', data); },
-    request: function(type, payload){ meshPost('request:' + type, { payload: payload }); },
-    on: function(type, handler){
-      var prev = meshChannel.onmessage;
-      meshChannel.onmessage = function(e){
-        if (prev) try { prev(e); } catch(_){}
-        var m = e.data;
-        if (m && m.type === type && m.from !== NODE.id) handler(m);
-      };
-    }
-  };
-
-  meshChannel.onmessage = function(e){
-    var m = e.data;
-    if (!m || m.from === NODE.id) return;
-    if (m.type === 'mesh:ping') {
-      meshPost('mesh:pong', {
-        url: location.origin + location.pathname,
-        title: NODE.name
-      });
-    }
-  };
-
-  meshPost('node:online', {
-    url: location.origin + location.pathname,
-    layers: 7
-  });
-
-  try { console.log('%c◊·κ=1', 'color:#10b981;font-weight:bold;font-size:13px',
-    NODE.name + ' · prime ' + NODE.prime + ' · mesh online'); } catch(_){}
-})();
-</script>
-<!-- /◊·κ FALLMESH SHIM -->
-
-<!-- ◊·κ BLOOM + MCP ROUTING SHIM — text → 7-ring vector + MCP server selection
-     v1.0 · 2026-05-27 · ported from teslasolar/MissCassandra · MIT · cross-pollination
-     Aligned to v18/v19 seed: B(Q)=[r0..r6] · P(Q)=Π(p_i^r_i)
-     Spine primes: R0=2 R1=3 R2=5 R3=7 R4=11 R5=13 R6=17 -->
-<script>
-(function bloomShim(){
-  if (window.bloom && window.bloom._v >= 1) return; // already loaded
-  var PRIMES = [2n, 3n, 5n, 7n, 11n, 13n, 17n];
-  var RING_KEYS = ['R0','R1','R2','R3','R4','R5','R6'];
-  var RING_LABELS = ['ground','sensor','gate','affect','executive','identity','observer'];
-  var RING_COLORS = ['#660044','#00AAFF','#FFAA00','#FF4444','#44AA44','#AA44FF','#FFFFFF'];
-
-  var RING_WORDS = {
-    R0: ['help','fix','broken','down','deploy','server','build','run','start','stop','crash','restart','install','hardware','resource','gpu','cpu','torus','walker','kangaroo','solver','signal'],
-    R1: ['find','search','look','check','monitor','scan','watch','detect','alert','log','track','measure','notice','see','hear','observe','sense','pulse','probe','listen','heartbeat'],
-    R2: ['filter','block','allow','route','gate','triage','review','approve','reject','sort','prioritize','threshold','permission','consent','accept','validate','verify','consensus','vote'],
-    R3: ['feel','want','need','wish','hope','worry','love','hate','urgent','important','care','afraid','excited','angry','sad','heart','warmth','tone','resonance','consonance','dissonance'],
-    R4: ['plan','schedule','create','design','architect','organize','manage','build','draft','compose','write','structure','assign','orchestrate','dispatch','execute','swarm','deploy','workflow'],
-    R5: ['who','identity','role','config','team','culture','policy','value','name','profile','purpose','mission','represent','bloom','signature','tag','handle','self','kappa'],
-    R6: ['why','meta','review','reflect','pattern','observe','meaning','understand','analyze','systemic','philosophical','oracle','watcher','witness','field','katapayadi','recursion']
-  };
-
-  function decompose(text) {
-    if (!text || typeof text !== 'string') {
-      return { bloom: [0,0,0,0,0,0,0], product: 1n, normalized: [0,0,0,0,0,0,0], dominantRing: -1, dominantLabel: 'silence' };
-    }
-    var lower = text.toLowerCase();
-    var tokens = lower.split(/\s+/).filter(Boolean);
-    var counts = [0,0,0,0,0,0,0];
-    for (var r = 0; r < 7; r++) {
-      var words = RING_WORDS[RING_KEYS[r]];
-      for (var i = 0; i < words.length; i++) {
-        var entry = words[i];
-        if (entry.indexOf(' ') !== -1) {
-          if (lower.indexOf(entry) !== -1) counts[r]++;
-        } else {
-          for (var j = 0; j < tokens.length; j++) if (tokens[j] === entry) counts[r]++;
-        }
-      }
-    }
-    var product = 1n;
-    for (var k = 0; k < 7; k++) for (var n = 0; n < counts[k]; n++) product *= PRIMES[k];
-    var max = Math.max.apply(null, counts);
-    var normalized = max === 0 ? [0,0,0,0,0,0,0] : counts.map(function(c){return c / max;});
-    var maxIdx = 0;
-    for (var m = 1; m < 7; m++) if (counts[m] > counts[maxIdx]) maxIdx = m;
-    var dominantLabel = counts[maxIdx] === 0 ? 'silence' : RING_LABELS[maxIdx];
-    return { bloom: counts, product: product, normalized: normalized, dominantRing: counts[maxIdx] === 0 ? -1 : maxIdx, dominantLabel: dominantLabel };
+  if (p === 'openai') {
+    const r = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + k }, body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'user', content: prompt }], max_tokens: maxTokens }) });
+    const d = await r.json(); if (!r.ok) throw new Error(d.error?.message || 'OpenAI error');
+    return d.choices?.[0]?.message?.content || '';
   }
-
-  function isBalanced(b) { var t = b.reduce(function(s,v){return s+v;},0); return t === 0 || b.every(function(v){return v/t <= 0.6;}); }
-  function isSpiked(b)   { var t = b.reduce(function(s,v){return s+v;},0); return t > 0 && b.some(function(v){return v/t > 0.7;}); }
-  function dominantRing(b) { var i = 0; for (var k = 1; k < b.length; k++) if (b[k] > b[i]) i = k; return b[i] === 0 ? -1 : i; }
-  function needsSearch(b, text) {
-    var t = b.reduce(function(s,v){return s+v;},0);
-    if (t === 0) return false;
-    var norm = b[1] / Math.max.apply(null, b);
-    return norm > 0.3 && /search|find|look up|what is|who is|latest|news|current/i.test(text);
+  if (p === 'gemini') {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+    const d = await r.json(); if (!r.ok) throw new Error(d.error?.message || 'Gemini error');
+    return d.candidates?.[0]?.content?.parts?.[0]?.text || '';
   }
-  function signature(text) {
-    var r = decompose(text);
-    return r.bloom.map(function(c,i){return 'R'+i+':'+c;}).join('|') + ' · Π=' + r.product.toString();
+  if (p === 'openrouter') {
+    const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + k, 'HTTP-Referer': location.origin }, body: JSON.stringify({ model: 'anthropic/claude-haiku-4-5', messages: [{ role: 'user', content: prompt }], max_tokens: maxTokens }) });
+    const d = await r.json(); if (!r.ok) throw new Error(d.error?.message || 'OpenRouter error');
+    return d.choices?.[0]?.message?.content || '';
   }
+  throw new Error('Unknown provider');
+}
 
-  // ── MCP routing ───────────────────────────────────────────
-  var MCP_RULES = [
-    { idx:4, threshold:0.3, pattern:/linear|issue|ticket|task|bug|feature/i,    server:{type:'url',url:'https://mcp.linear.app/sse',name:'linear-mcp'} },
-    { idx:3, threshold:0.3, pattern:/email|mail|send|inbox/i,                  server:{type:'url',url:'https://gmail.mcp.claude.com/mcp',name:'gmail-mcp'} },
-    { idx:4, threshold:0.3, pattern:/calendar|schedule|meeting|event/i,         server:{type:'url',url:'https://gcal.mcp.claude.com/mcp',name:'gcal-mcp'} },
-    { idx:2, threshold:0.3, pattern:/jira|confluence|atlassian/i,               server:{type:'url',url:'https://mcp.atlassian.com/v1/sse',name:'atlassian-mcp'} },
-    { idx:0, threshold:0.3, pattern:/deploy|cloudflare|worker|pages/i,           server:{type:'url',url:'https://github.com/cloudflare/mcp-server-cloudflare',name:'cloudflare-mcp'} },
-    { idx:3, threshold:0.3, pattern:/intercom|customer|support/i,               server:{type:'url',url:'https://mcp.intercom.com/sse',name:'intercom-mcp'} },
-    { idx:0, threshold:0.3, pattern:/fallcore|proxy|on.?prem|sovereign/i,        server:{type:'local',url:'http://localhost:5510',name:'fallcore-mcp'} },
-    { idx:4, threshold:0.3, pattern:/reason|think|chain|prove|onlybrains/i,     server:{type:'url',url:'https://onlybrains.onrender.com/mcp',name:'onlybrains-mcp'} }
-  ];
-  function pickMCP(norm, text) {
-    var out = []; var seen = {};
-    if (!norm || !text) return out;
-    for (var i = 0; i < MCP_RULES.length; i++) {
-      var rule = MCP_RULES[i];
-      if (norm[rule.idx] > rule.threshold && rule.pattern.test(text) && !seen[rule.server.name]) {
-        out.push(rule.server);
-        seen[rule.server.name] = true;
-      }
-    }
-    return out;
-  }
+async function forgeConfig() {
+  if (!state.apiKey) { toast('Paste an API key'); return; }
+  const brief = document.getElementById('brief').value.trim();
+  const tool = document.getElementById('tool').value;
+  const tier = document.getElementById('tier').value;
+  const out = document.getElementById('forgeOut');
+  if (!brief) { toast('Add a client brief'); return; }
 
-  // Expose
-  window.bloom = {
-    _v: 1,
-    decompose: decompose,
-    isBalanced: isBalanced,
-    isSpiked: isSpiked,
-    dominantRing: dominantRing,
-    needsSearch: needsSearch,
-    signature: signature,
-    pickMCP: pickMCP,
-    RING_KEYS: RING_KEYS,
-    RING_LABELS: RING_LABELS,
-    RING_COLORS: RING_COLORS,
-    PRIMES: [2,3,5,7,11,13,17]
-  };
-  try { console.log('%c◊·κ bloom', 'color:#4ecba0;font-weight:bold', 'v1 · text→[r0..r6] · window.bloom.decompose(text)'); } catch(_){}
+  out.classList.add('show'); out.classList.remove('error');
+  out.innerHTML = '<pre>profiling archetype...\ndetecting shadow...\nselecting voice...\nbuilding config...</pre>';
 
-  // KCC ledger emission: tag every entry with its bloom signature
-  // Hook into existing kcc shim if present
-  setTimeout(function(){
-    if (window.kcc && window.kcc.emit && !window.kcc._bloomHooked) {
-      var origEmit = window.kcc.emit.bind(window.kcc);
-      window.kcc.emit = function(action, ring, weight, meta) {
-        try {
-          if (action && typeof action === 'string') {
-            var sig = decompose(action);
-            meta = meta || {};
-            meta.bloom = sig.bloom;
-            meta.dominantRing = sig.dominantRing;
-          }
-        } catch(_){}
-        return origEmit(action, ring, weight, meta);
-      };
-      window.kcc._bloomHooked = true;
-    }
-  }, 500);
-})();
-</script>
-<!-- /◊·κ BLOOM + MCP ROUTING SHIM -->
+  const prompt = '═══ TRILOGY FORGE · PSYCHOLOGICAL BUILD ENGINE ═══\n\nYou apply Jung\'s archetype map + Freud\'s shadow detection + classic sales psychology to client briefs. You return a config object for a sovereign HTML tool deployment.\n\nThe 8 archetypes: Ruler, Creator, Sage, Outlaw, Hero, Caregiver, Explorer, Magician.\n\nClient brief:\n' + brief + '\n\nTarget tool: ' + tool + '\nTier: ' + tier + '\n\nReturn ONLY valid JSON in this shape, no other text or markdown fences:\n{\n  "archetype": "one of the 8",\n  "archetype_evidence": "1-line why",\n  "shadow": "what the client is avoiding (Freud)",\n  "voice": "tone profile · 1 line",\n  "ui": { "palette": "", "first_screen": "", "empty_state": "" },\n  "copy": { "hero": "", "tagline": "", "cta": "" },\n  "agents": ["3-7 agent role names tuned for this client"],\n  "defaults": { "key1": "value1" },\n  "delivery": "scope summary for the ' + tier + ' tier"\n}';
 
-
-<!-- ◊·κ KONOMI LICENCE — Ed25519 (drop-in, no deps) -->
-<script>
-(function konomiShim(){
-  // NODE is defined by host tool's mesh shim. If missing, fail gracefully.
-  if (!window.NODE) return;
-  var KONOMI = window.KONOMI = {
-    pubkey_b64: 'bQWcb/SgeWVIEa0H+YYGhzohMfo9zcDysqZEvzYtXTw=',
-    tier: 'dead',
-    features: [],
-    payload: null,
-    expires_at: null
-  };
-  function b64Bytes(b64){ var bin=atob(b64); var b=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++) b[i]=bin.charCodeAt(i); return b; }
-  function canonJSON(o){
-    if (o===null||typeof o!=='object') return JSON.stringify(o);
-    if (Array.isArray(o)) return '['+o.map(canonJSON).join(',')+']';
-    var k=Object.keys(o).sort();
-    return '{'+k.map(function(x){return JSON.stringify(x)+':'+canonJSON(o[x]);}).join(',')+'}';
-  }
-  async function verifyLicence(env){
-    if (!env) return { ok:false, error:'no envelope' };
-    if (!window.crypto || !window.crypto.subtle) return { ok:false, error:'no WebCrypto' };
-    try {
-      var raw = atob(env);
-      var parsed = JSON.parse(raw);
-      var payload = parsed.payload, sig = parsed.sig;
-      if (payload.tool_id && payload.tool_id !== NODE.id) {
-        return { ok:false, error:'licence for ' + payload.tool_id + ', not ' + NODE.id };
-      }
-      if (payload.expires && new Date(payload.expires) < new Date()) {
-        return { ok:false, error:'expired ' + payload.expires };
-      }
-      var pubRaw = b64Bytes(KONOMI.pubkey_b64);
-      var key = await crypto.subtle.importKey('raw', pubRaw, { name:'Ed25519' }, false, ['verify']);
-      var sigBytes = b64Bytes(sig);
-      var msg = new TextEncoder().encode(canonJSON(payload));
-      var ok = await crypto.subtle.verify({ name:'Ed25519' }, key, sigBytes, msg);
-      if (!ok) return { ok:false, error:'signature invalid' };
-      return { ok:true, payload:payload };
-    } catch (e) { return { ok:false, error:e.message }; }
-  }
-  async function activateLicence(env){
-    var v = await verifyLicence(env);
-    if (!v.ok) {
-      try { localStorage.setItem('konomi_last_error', v.error); } catch(_){}
-      return v;
-    }
-    try { localStorage.setItem('konomi_licence_' + NODE.id, env); } catch(_){}
-    KONOMI.tier = v.payload.tier;
-    KONOMI.features = v.payload.features || [];
-    KONOMI.payload = v.payload;
-    KONOMI.expires_at = v.payload.expires;
-    updateBadge();
-    return v;
-  }
-  function hasFeature(f){ return KONOMI.features.indexOf(f) >= 0; }
-  function isDead(){ return KONOMI.tier === 'dead'; }
-  function updateBadge(){
-    var el = document.getElementById('konomi-badge');
-    if (!el) return;
-    var t = KONOMI.tier;
-    var c = t==='dead'?'#8a8a8a':t==='trial'?'#c2a060':'#3a9a72';
-    el.textContent = '◊ ' + t.toUpperCase();
-    el.style.color = c;
-    el.title = 'Konomi tier: ' + t + (KONOMI.expires_at ? ' · expires ' + KONOMI.expires_at : '');
-  }
-  function injectBadge(){
-    if (document.getElementById('konomi-badge')) return;
-    var el = document.createElement('div');
-    el.id = 'konomi-badge';
-    el.style.cssText = 'position:fixed;bottom:12px;left:12px;background:rgba(0,0,0,.65);color:#8a8a8a;padding:5px 10px;border-radius:6px;font-family:monospace;font-size:11px;cursor:pointer;z-index:9999;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px)';
-    el.textContent = '◊ DEAD';
-    el.onclick = function(){ showLicenceDialog(); };
-    document.body.appendChild(el);
-  }
-  function showLicenceDialog(){
-    var current = KONOMI.payload ? JSON.stringify(KONOMI.payload, null, 2) : '(DEAD mode — no licence active)';
-    var modal = document.createElement('div');
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,sans-serif';
-    modal.innerHTML = '<div style="background:#161821;border:1px solid #2a2f3a;border-radius:12px;padding:24px;max-width:560px;width:100%;color:#dbe1ea"><h3 style="margin:0 0 12px;color:#e6e8ee">◊·κ Konomi Licence</h3><p style="margin:0 0 8px;font-size:12px;color:#8a8a8a">Tool: '+(NODE.name||NODE.id)+' · Prime: '+(NODE.prime||'-')+'</p><pre style="background:#0c0e12;padding:10px;border-radius:6px;font-size:11px;color:#a8b0bc;max-height:200px;overflow:auto;margin:8px 0">'+current.replace(/[<>]/g,'')+'</pre><p style="font-size:12px;color:#8a8a8a;margin:12px 0 6px">Paste a signed licence envelope to activate Pro/Business/Enterprise:</p><textarea id="kn-paste" style="width:100%;min-height:80px;background:#0c0e12;color:#dbe1ea;border:1px solid #2a2f3a;border-radius:6px;padding:8px;font-family:monospace;font-size:11px;resize:vertical"></textarea><div style="display:flex;gap:8px;margin-top:12px"><button id="kn-activate" style="background:#5b8def;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600">activate</button><button id="kn-close" style="background:transparent;color:#8a8a8a;border:1px solid #2a2f3a;padding:8px 14px;border-radius:6px;cursor:pointer">close</button><span id="kn-msg" style="margin-left:auto;font-size:11px;color:#c84a4a;align-self:center"></span></div></div>';
-    document.body.appendChild(modal);
-    modal.querySelector('#kn-close').onclick = function(){ modal.remove(); };
-    modal.querySelector('#kn-activate').onclick = async function(){
-      var paste = modal.querySelector('#kn-paste').value.trim();
-      if (!paste) { modal.querySelector('#kn-msg').textContent = 'paste an envelope first'; return; }
-      var v = await activateLicence(paste);
-      if (v.ok) { modal.querySelector('#kn-msg').style.color='#3a9a72'; modal.querySelector('#kn-msg').textContent='✓ '+v.payload.tier+' activated'; setTimeout(function(){ modal.remove(); }, 1200); }
-      else { modal.querySelector('#kn-msg').textContent = 'rejected: ' + v.error; }
-    };
-    modal.onclick = function(e){ if (e.target===modal) modal.remove(); };
-  }
-  window.konomi = {
-    verifyLicence: verifyLicence,
-    activateLicence: activateLicence,
-    hasFeature: hasFeature,
-    isDead: isDead,
-    showDialog: showLicenceDialog
-  };
-  // Boot: try saved licence
-  (async function(){
-    if (document.readyState === 'loading') {
-      await new Promise(function(r){ document.addEventListener('DOMContentLoaded', r, { once:true }); });
-    }
-    injectBadge();
-    var saved = null;
-    try { saved = localStorage.getItem('konomi_licence_' + NODE.id); } catch(_){}
-    if (saved) {
-      var v = await verifyLicence(saved);
-      if (v.ok) {
-        KONOMI.tier = v.payload.tier;
-        KONOMI.features = v.payload.features || [];
-        KONOMI.payload = v.payload;
-        KONOMI.expires_at = v.payload.expires;
-        updateBadge();
-        try { console.log('%c◊·κ', 'color:#c2a060;font-weight:bold', NODE.name + ' · ' + v.payload.tier + ' tier active'); } catch(_){}
-        return;
-      }
-    }
-    try { console.log('%c◊', 'color:#8a8a8a;font-weight:bold', NODE.name + ' · DEAD mode · click badge to activate'); } catch(_){}
-  })();
-})();
-</script>
-<!-- /◊·κ KONOMI LICENCE -->
-
-<!-- ◊·κ KCC LEDGER v3 — Konomi Cube Coin + OnlyBrains client (drop-in, no deps) -->
-<!--
-  Ω(KCC) v18 · proof of contribution · not speculation
-    earn by: compute(R0)·signal(R1)·filter(R2)·care(R3)·build(R4)·verify(R5)·govern(R6)
-    spend: you don't · KCC accumulates · revenue finds you
-    ledger: tools themselves · local-first + OnlyBrains REST anchor
-    bloom IS identity · the shape of your contribution IS your address
-
-  OnlyBrains REST client exposed on window.kcc:
-    .reason(problem, strategy?)   → POST /api/reason       · 10 $KONO · 7 strategies
-    .oracle()                     → POST /api/fn/exec ORACLE · 5 $KONO
-    .anchor(type, params)         → POST /api/fn/exec     · varies · BSV chain anchor
-    .mintNft(id, mime, hash, meta)→ POST /api/fn/exec NFT · 100 $KONO
-    .queryTags(q?)                → GET  /api/tags        · 1 $KONO
-    .quote(model, tokens, asset)  → GET  /api/xchg/quote  · free
-    .swap(model, tokens, asset)   → POST /api/xchg/swap   · 0 $KONO (it's the swap)
-    .rates() / .tiers() / .chain() / .wallet() / .syncOnlyBrains() / .fnList()
-
-  Mesh: 4 BroadcastChannels (fall-kcc + kcc-mesh + onlybrains-mesh + ass-os-mesh)
-  Depends on: window.NODE (mesh shim)
--->
-<script>
-(function kccShim(){
-  if (!window.NODE) return;
-  var KCC_KEY = 'kcc_ledger_' + (window.NODE.id || 'node') + '_v1';
-  var ONLYBRAINS_API = 'https://onlybrains.onrender.com';
-
-  // ── ring map · canonical (anatomy + earning verbs) ──
-  var RINGS = [
-    { i:0, v:'R0', anat:'ground',  verb:'compute', hz:'7.83',  colour:'#B42838' },
-    { i:1, v:'R1', anat:'signal',  verb:'signal',  hz:'15.66', colour:'#008CC8' },
-    { i:2, v:'R2', anat:'gate',    verb:'filter',  hz:'23.49', colour:'#DCA030' },
-    { i:3, v:'R3', anat:'heart',   verb:'care',    hz:'31.32', colour:'#28B450' },
-    { i:4, v:'R4', anat:'voice',   verb:'build',   hz:'39.15', colour:'#5078DC' },
-    { i:5, v:'R5', anat:'mirror',  verb:'verify',  hz:'46.98', colour:'#8C50C8' },
-    { i:6, v:'R6', anat:'watcher', verb:'govern',  hz:'54.81', colour:'#787878' }
-  ];
-
-  function getKccKey(){
-    try {
-      var k = localStorage.getItem('kcc-key');
-      if (!k) {
-        k = 'kcc-' + Array.from(crypto.getRandomValues(new Uint8Array(4)))
-          .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
-        localStorage.setItem('kcc-key', k);
-      }
-      return k;
-    } catch(_){ return 'kcc-anon'; }
-  }
-  var KEY = getKccKey();
-
-  var LEDGER = { events:[], head:null, last_export:null, ob_balance:null, ob_last_sync:null, anchors:[] };
   try {
-    var raw = localStorage.getItem(KCC_KEY);
-    if (raw) LEDGER = Object.assign(LEDGER, JSON.parse(raw));
-  } catch(_){}
-  function persist(){ try { localStorage.setItem(KCC_KEY, JSON.stringify(LEDGER)); } catch(_){} }
-
-  function canon(o){
-    if (o===null||typeof o!=='object') return JSON.stringify(o);
-    if (Array.isArray(o)) return '['+o.map(canon).join(',')+']';
-    var k=Object.keys(o).sort();
-    return '{'+k.map(function(x){return JSON.stringify(x)+':'+canon(o[x]);}).join(',')+'}';
-  }
-  function fnv1a(str){
-    var h = 2166136261 >>> 0;
-    for (var i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0; }
-    return ('00000000'+h.toString(16)).slice(-8);
-  }
-
-  function emit(action, ringId, weight, meta){
-    var ring = typeof ringId === 'number' ? ringId : (RINGS.findIndex(function(r){ return r.verb===ringId || r.anat===ringId || r.v===ringId; }));
-    if (ring < 0 || ring > 6) ring = 0;
-    var ev = {
-      v: 1,
-      tool: window.NODE.id,
-      tool_prime: window.NODE.prime,
-      action: String(action || 'event'),
-      ring: ring,
-      weight: typeof weight === 'number' ? weight : 1,
-      t: Date.now(),
-      prev: LEDGER.head || null,
-      meta: meta || null
-    };
-    ev.h = fnv1a(canon(ev) + (LEDGER.head || ''));
-    LEDGER.events.push(ev);
-    LEDGER.head = ev.h;
-    persist();
-    if (window.kccChannels) {
-      window.kccChannels.forEach(function(ch){
-        try { ch.postMessage({ source: NODE.id, type:'kcc:event', from:NODE.id, prime:NODE.prime, ts:Date.now(), ev:ev }); } catch(_){}
-      });
+    const result = await callLLM(prompt);
+    const m = result.match(/\{[\s\S]*\}/);
+    let formatted = result;
+    if (m) {
+      try { formatted = JSON.stringify(JSON.parse(m[0]), null, 2); } catch (e) {}
     }
-    updateBadge();
-    return ev;
+    out.innerHTML = '<pre>' + escHTML(formatted) + '</pre>';
+  } catch (e) {
+    out.classList.add('error');
+    out.innerHTML = '<pre>Error: ' + escHTML(e.message) + '</pre>';
   }
+}
+window.forgeConfig = forgeConfig;
 
-  function bloom(){
-    var b = [0,0,0,0,0,0,0];
-    LEDGER.events.forEach(function(ev){ b[ev.ring] = (b[ev.ring] || 0) + (ev.weight || 1); });
-    return b;
-  }
-  function shape(){
-    var b = bloom();
-    var sum = b.reduce(function(a,x){ return a+x; }, 0);
-    var peak = b.indexOf(Math.max.apply(null, b));
-    var name = sum === 0 ? 'unbloomed' : RINGS[peak].verb;
-    return { vec:b, sum:sum, peak:peak, peakRing:RINGS[peak], shape:name };
-  }
-
-  function exportProof(opts){
-    opts = opts || {};
-    var payload = {
-      v: 1, tool: NODE.id, tool_prime: NODE.prime, tool_name: NODE.name,
-      issued: new Date().toISOString(),
-      event_count: LEDGER.events.length, head: LEDGER.head,
-      bloom: bloom(), shape: shape(), kcc_key: KEY,
-      onlybrains_balance: LEDGER.ob_balance,
-      anchors_count: (LEDGER.anchors || []).length
-    };
-    if (opts.includeEvents) payload.events = LEDGER.events;
-    if (opts.includeAnchors) payload.anchors = LEDGER.anchors;
-    LEDGER.last_export = Date.now();
-    persist();
-    return payload;
-  }
-
-  // ── OnlyBrains REST client ────────────────────
-  function _withTimeout(promise, ms) {
-    var ctrl = new AbortController();
-    var t = setTimeout(function(){ ctrl.abort(); }, ms || 8000);
-    return { ctrl: ctrl, done: function(){ clearTimeout(t); } };
-  }
-  function _get(path, ms) {
-    var x = _withTimeout(null, ms);
-    return fetch(ONLYBRAINS_API + path + (path.indexOf('?')>=0?'&':'?') + 'key=' + encodeURIComponent(KEY), { signal: x.ctrl.signal })
-      .then(function(r){ x.done(); return r.json(); })
-      .catch(function(e){ x.done(); return { error: e.name === 'AbortError' ? 'timeout' : (e.message || 'fetch failed') }; });
-  }
-  function _post(path, body, ms) {
-    var x = _withTimeout(null, ms);
-    return fetch(ONLYBRAINS_API + path + (path.indexOf('?')>=0?'&':'?') + 'key=' + encodeURIComponent(KEY), {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.assign({ key: KEY }, body || {})),
-      signal: x.ctrl.signal
-    }).then(function(r){ x.done(); return r.json(); })
-      .catch(function(e){ x.done(); return { error: e.name === 'AbortError' ? 'timeout' : (e.message || 'fetch failed') }; });
-  }
-
-  // Wallet sync · fire-and-forget · short timeout
-  function syncOnlyBrains(){
-    return _get('/api/wallet', 4500).then(function(w){
-      if (w && typeof w.balance !== 'undefined') {
-        LEDGER.ob_balance = { balance: w.balance, mined: w.mined, calls: w.calls };
-        LEDGER.ob_last_sync = Date.now();
-        persist();
-        updateBadge();
-      }
-      return w;
-    });
-  }
-
-  // 7-strategy structured reasoning · 10 $KONO each
-  function reason(problem, strategy) {
-    if (!problem) return Promise.resolve({ error: 'problem required' });
-    var p = _post('/api/reason', { problem: problem, strategy: strategy || 'CoT' }, 45000);
-    emit('ob:reason:' + (strategy || 'CoT'), 5, 1.5, { problem: String(problem).slice(0, 80) });
-    return p.then(function(r){
-      if (r && !r.error) {
-        LEDGER.anchors = LEDGER.anchors || [];
-        LEDGER.anchors.push({ kind:'reason', strategy: strategy || 'CoT', at: Date.now(), result: r });
-        if (LEDGER.anchors.length > 50) LEDGER.anchors = LEDGER.anchors.slice(-50);
-        persist();
-        // refresh wallet to reflect new cost
-        setTimeout(syncOnlyBrains, 800);
-      }
-      return r;
-    });
-  }
-
-  // Generic BSV chain anchor via /api/fn/exec
-  function anchor(type, params) {
-    if (!type) return Promise.resolve({ error: 'type required' });
-    var p = _post('/api/fn/exec', { type: String(type).toUpperCase(), params: params || {} }, 30000);
-    var ring = type === 'STATE' || type === 'TRADE' ? 6 : type === 'ALARM' ? 2 : type === 'KPI' ? 5 : 4;
-    emit('ob:anchor:' + String(type).toLowerCase(), ring, 2, { type: type });
-    return p.then(function(r){
-      if (r && !r.error) {
-        LEDGER.anchors = LEDGER.anchors || [];
-        LEDGER.anchors.push({ kind:'anchor', type: type, at: Date.now(), params: params, result: r });
-        if (LEDGER.anchors.length > 50) LEDGER.anchors = LEDGER.anchors.slice(-50);
-        persist();
-        setTimeout(syncOnlyBrains, 800);
-      }
-      return r;
-    });
-  }
-
-  // Convenience: price oracle snapshot · 5 $KONO
-  function oracle(opts) {
-    var defaults = { BTC: true, BSV: true, ETH: true, SOL: true };
-    return anchor('ORACLE', Object.assign(defaults, opts || {}));
-  }
-
-  // Convenience: mint a 4D tesseract NFT · 100 $KONO
-  function mintNft(id, mime, hash, meta) {
-    return anchor('NFT', {
-      id: id || ('nft-' + NODE.id + '-' + Date.now()),
-      mime: mime || 'application/json',
-      hash: hash || fnv1a(canon(meta || {})),
-      meta: meta || ('Forged by ' + NODE.name + ' · prime ' + NODE.prime)
-    });
-  }
-
-  // Quote / swap / rates / tiers / chain / fnList / queryTags
-  function quote(model, tokens, asset) {
-    return _get('/api/xchg/quote?model=' + encodeURIComponent(model || 'anthropic') + '&tokens=' + (tokens || 1000) + '&asset=' + (asset || 'reason'), 8000);
-  }
-  function swap(model, tokens, asset) {
-    return _post('/api/xchg/swap', { model: model || 'anthropic', tokens: tokens || 1000, asset: asset || 'reason' }, 12000)
-      .then(function(r){ if (r && !r.error) setTimeout(syncOnlyBrains, 800); return r; });
-  }
-  function rates() { return _get('/api/xchg/rates', 8000); }
-  function tiers() { return _get('/api/tiers', 8000); }
-  function chain() { return _get('/api/chain', 8000); }
-  function fnList() { return _get('/api/fn/list', 8000); }
-  function wallet() { return _get('/api/wallet', 8000); }
-  function queryTags(q) { return _get('/api/tags' + (q ? '?q=' + encodeURIComponent(q) : ''), 10000); }
-
-  // ── Floating badge ───────────────────────────
-  var bloomBadge = null;
-  function injectBadge(){
-    if (document.getElementById('kcc-badge')) return;
-    var el = document.createElement('div');
-    el.id = 'kcc-badge';
-    el.style.cssText = 'position:fixed;bottom:12px;left:120px;background:rgba(0,0,0,.65);color:#dbe1ea;padding:5px 10px;border-radius:6px;font-family:monospace;font-size:11px;cursor:pointer;z-index:9999;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px);display:flex;align-items:center;gap:6px';
-    el.title = 'KCC ledger · OnlyBrains-linked';
-    el.onclick = function(){ showLedger(); };
-    document.body.appendChild(el);
-    bloomBadge = el;
-    updateBadge();
-  }
-  function updateBadge(){
-    if (!bloomBadge) return;
-    var b = bloom();
-    var sum = b.reduce(function(a,x){ return a+x; }, 0);
-    var sparks = b.map(function(v, i){
-      var sz = Math.min(11, 2 + Math.round(v/2));
-      return '<span style="display:inline-block;width:3px;height:'+sz+'px;background:'+RINGS[i].colour+';margin:0 1px;border-radius:1px;vertical-align:middle"></span>';
-    }).join('');
-    var ob = (LEDGER.ob_balance && LEDGER.ob_balance.balance !== undefined)
-      ? ' · <span style="color:#d4af37">$KONO ' + LEDGER.ob_balance.balance + '</span>'
-      : '';
-    bloomBadge.innerHTML = '<span style="opacity:.7">KCC</span> '+sparks+' <span style="opacity:.85">'+sum+'</span>'+ob;
-  }
-
-  // ── Ledger modal with OnlyBrains actions ────
-  function showLedger(){
-    var b = bloom();
-    var sh = shape();
-    var rows = RINGS.map(function(r, i){
-      var v = b[i];
-      var pct = sh.sum ? Math.round(v/sh.sum*100) : 0;
-      return '<tr><td style="color:'+r.colour+';padding:4px 0;font-weight:600">'+r.v+'</td><td>'+r.anat+'</td><td style="color:#8a8a8a">'+r.verb+'</td><td>'+r.hz+' Hz</td><td style="text-align:right;font-weight:700">'+v+'</td><td style="color:#8a8a8a">'+pct+'%</td></tr>';
-    }).join('');
-    var recent = LEDGER.events.slice(-6).reverse().map(function(ev){
-      var d = new Date(ev.t).toLocaleString();
-      return '<div style="font-size:11px;color:#a8b0bc;padding:2px 0">'+d+' · <span style="color:'+RINGS[ev.ring].colour+';font-weight:600">'+RINGS[ev.ring].v+'</span> · '+ev.action+(ev.weight!==1?' ×'+ev.weight:'')+'</div>';
-    }).join('') || '<div style="color:#8a8a8a;font-size:12px;padding:6px 0">no events yet</div>';
-    var anchorsHtml = (LEDGER.anchors || []).slice(-5).reverse().map(function(a){
-      var d = new Date(a.at).toLocaleString();
-      var label = a.kind === 'reason' ? ('reason · ' + a.strategy) : (a.kind + ' · ' + a.type);
-      return '<div style="font-size:10px;color:#a8b0bc;padding:2px 0"><span style="color:#d4af37">'+d+'</span> · '+label+'</div>';
-    }).join('') || '<div style="color:#8a8a8a;font-size:11px;padding:4px 0">no OnlyBrains calls yet</div>';
-    var bal = LEDGER.ob_balance ? LEDGER.ob_balance.balance : '—';
-    var obSection = '<div style="background:#0c0e12;border:1px solid #2a2f3a;border-radius:8px;padding:10px;margin:10px 0;font-size:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style="color:#d4af37;font-weight:700">$KONO ' + bal + '</div><div style="color:#8a8a8a;font-size:10px">key <code>'+KEY+'</code></div></div><button id="kcc-sync" style="background:transparent;color:#d4af37;border:1px solid #d4af37;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px">sync</button></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"><button data-act="reason"  style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="10 $KONO">🧠 reason</button><button data-act="oracle"  style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="5 $KONO">🔮 oracle</button><button data-act="anchor"  style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="varies">⚓ anchor</button><button data-act="nft"     style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="100 $KONO">🎴 mint NFT</button><button data-act="rates"   style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="free">📊 rates</button><button data-act="quote"   style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="free">💱 quote</button><button data-act="chain"   style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="free">⛓️ chain</button><button data-act="tags"    style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="1 $KONO">🏷️ tags</button></div><div id="kcc-ob-result" style="margin-top:8px;font-size:10px;color:#8a8a8a;max-height:120px;overflow:auto;font-family:monospace;display:none;background:#06080c;border:1px solid #1f2937;border-radius:4px;padding:6px"></div></div>';
-    var modal = document.createElement('div');
-    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,sans-serif';
-    modal.innerHTML='<div style="background:#161821;border:1px solid #2a2f3a;border-radius:12px;padding:22px;max-width:620px;width:100%;color:#dbe1ea;max-height:90vh;overflow:auto"><h3 style="margin:0 0 4px;color:#e6e8ee">◊·κ KCC Ledger · OnlyBrains</h3><p style="margin:0 0 10px;font-size:12px;color:#8a8a8a">'+window.NODE.name+' · prime '+window.NODE.prime+' · shape: '+sh.shape+' · '+sh.sum+' events</p>'+obSection+'<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px"><thead><tr style="border-bottom:1px solid #2a2f3a"><th style="text-align:left;padding:6px 0">ring</th><th style="text-align:left">anat</th><th style="text-align:left">verb</th><th style="text-align:left">Hz</th><th style="text-align:right">n</th><th>%</th></tr></thead><tbody>'+rows+'</tbody></table><h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 4px">recent events</h4>'+recent+'<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 4px">recent OnlyBrains calls</h4>'+anchorsHtml+'<div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap"><button id="kcc-export" style="background:#5b8def;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">export proof</button><button id="kcc-close" style="background:transparent;color:#8a8a8a;border:1px solid #2a2f3a;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px">close</button><span style="margin-left:auto;align-self:center;font-size:11px;color:#8a8a8a">head: <code>'+(LEDGER.head||'∅')+'</code></span></div></div>';
-    document.body.appendChild(modal);
-    var resultEl = modal.querySelector('#kcc-ob-result');
-    function showResult(label, data){
-      resultEl.style.display = 'block';
-      var s = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-      if (s.length > 4000) s = s.slice(0, 4000) + '\n…';
-      resultEl.textContent = '> ' + label + '\n' + s;
-    }
-    modal.querySelector('#kcc-close').onclick = function(){ modal.remove(); };
-    modal.querySelector('#kcc-sync').onclick = function(){
-      showResult('syncing wallet…', '');
-      syncOnlyBrains().then(function(w){ showResult('wallet', w); modal.remove(); showLedger(); });
-    };
-    modal.querySelector('#kcc-export').onclick = function(){
-      var p = exportProof({ includeEvents:true, includeAnchors:true });
-      var blob = new Blob([JSON.stringify(p, null, 2)], { type:'application/json' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a'); a.href = url; a.download = NODE.id + '-kcc-proof-' + Date.now() + '.json'; a.click();
-      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-    };
-    modal.querySelectorAll('button[data-act]').forEach(function(btn){
-      btn.onclick = function(){
-        var act = btn.getAttribute('data-act');
-        if (act === 'reason') {
-          var problem = prompt('What problem? (10 $KONO)');
-          if (!problem) return;
-          var strat = prompt('Strategy? (CoT / ToT / GoT / BoT / SelfAsk / ReAct / Reflexion)', 'CoT');
-          showResult('reason: ' + strat, 'thinking…');
-          reason(problem, strat).then(function(r){ showResult('reason · ' + strat, r); });
-        } else if (act === 'oracle') {
-          showResult('oracle (5 $KONO)', 'fetching…');
-          oracle().then(function(r){ showResult('oracle', r); });
-        } else if (act === 'anchor') {
-          var type = prompt('Anchor type? (STATE / KPI / ALARM / TRADE / ASSET / SVG)', 'STATE');
-          if (!type) return;
-          var paramsStr = prompt('Params JSON (e.g. {"equip":"X","from":"idle","to":"run","mode":"auto"})', '{}');
-          var params; try { params = JSON.parse(paramsStr || '{}'); } catch(e){ alert('invalid JSON'); return; }
-          showResult('anchor · ' + type, 'anchoring to BSV…');
-          anchor(type, params).then(function(r){ showResult('anchor · ' + type, r); });
-        } else if (act === 'nft') {
-          var meta = prompt('NFT meta (100 $KONO)', NODE.name + ' · prime ' + NODE.prime);
-          if (!meta) return;
-          showResult('mint NFT', 'minting…');
-          mintNft(null, null, null, meta).then(function(r){ showResult('NFT minted', r); });
-        } else if (act === 'rates') {
-          showResult('rates', 'fetching…');
-          rates().then(function(r){ showResult('rates', r); });
-        } else if (act === 'quote') {
-          showResult('quote · anthropic 10k → reason', 'fetching…');
-          quote('anthropic', 10000, 'reason').then(function(r){ showResult('quote', r); });
-        } else if (act === 'chain') {
-          showResult('chain', 'fetching…');
-          chain().then(function(r){ showResult('chain', r); });
-        } else if (act === 'tags') {
-          showResult('tags', 'fetching…');
-          queryTags().then(function(r){ showResult('tags', r); });
-        }
-      };
-    });
-    modal.onclick = function(e){ if (e.target===modal) modal.remove(); };
-  }
-
-  // ── 4-channel mesh interop ──
-  var CHANNEL_NAMES = ['fall-kcc', 'kcc-mesh', 'onlybrains-mesh', 'ass-os-mesh'];
-  window.kccChannels = [];
-  CHANNEL_NAMES.forEach(function(name){
-    try {
-      var ch = new BroadcastChannel(name);
-      window.kccChannels.push(ch);
-      ch.onmessage = function(e){
-        var m = e.data;
-        if (!m || m.from === NODE.id || m.source === NODE.id) return;
-        if (window.KCC_LISTEN && (m.type === 'kcc:event')) {
-          emit('observed:' + (m.from || m.source || 'peer'), 1, 0.1, { ev_h: m.ev && m.ev.h, channel: name });
-        }
-      };
-    } catch(_){}
-  });
-  if (window.kccChannels.length > 0) window.kccChannel = window.kccChannels[0];
-
-  // ── Quarterly bloom report (formal cognitive contribution statement) ──
-  function exportBloomReport(opts){
-    opts = opts || {};
-    var quarterStart = opts.since || (function(){
-      var d = new Date(); var q = Math.floor(d.getMonth() / 3);
-      return new Date(d.getFullYear(), q * 3, 1).getTime();
-    })();
-    var quarterEnd = opts.until || Date.now();
-    var qEvents = LEDGER.events.filter(function(e){ return e.t >= quarterStart && e.t <= quarterEnd; });
-    var qBloom = [0,0,0,0,0,0,0];
-    var topActions = {};
-    var anchoredCount = 0;
-    qEvents.forEach(function(ev){
-      qBloom[ev.ring] = (qBloom[ev.ring] || 0) + (ev.weight || 1);
-      topActions[ev.action] = (topActions[ev.action] || 0) + (ev.weight || 1);
-    });
-    (LEDGER.anchors || []).forEach(function(a){ if (a.at >= quarterStart && a.at <= quarterEnd) anchoredCount++; });
-    var totalEvents = qEvents.length;
-    var totalContribution = qBloom.reduce(function(a,x){ return a+x; }, 0);
-    var peakIdx = qBloom.indexOf(Math.max.apply(null, qBloom));
-    var shapeName = totalContribution === 0 ? 'unbloomed' : RINGS[peakIdx].verb;
-    var primesProduct = (function(){
-      var primes = [2,3,5,7,11,13,17];
-      var prod = 1n;
-      for (var i = 0; i < 7; i++) for (var j = 0; j < Math.floor(qBloom[i]); j++) prod *= BigInt(primes[i]);
-      return prod.toString();
-    })();
-    var startDate = new Date(quarterStart).toISOString().slice(0,10);
-    var endDate = new Date(quarterEnd).toISOString().slice(0,10);
-    var topList = Object.entries(topActions).sort(function(a,b){ return b[1]-a[1]; }).slice(0, 10);
-
-    var format = opts.format || 'markdown';
-    if (format === 'json') {
-      var payload = {
-        v: 1, type: 'bloom_quarterly_report',
-        tool: NODE.id, tool_name: NODE.name, tool_prime: NODE.prime,
-        period: { from: startDate, to: endDate, ms: quarterEnd - quarterStart },
-        bloom_vec: qBloom, bloom_sum: totalContribution, bloom_shape: shapeName,
-        peak_ring: RINGS[peakIdx],
-        prime_product: primesProduct,
-        events_total: totalEvents,
-        anchors_total: anchoredCount,
-        top_actions: topList,
-        kcc_key: KEY,
-        onlybrains_balance: LEDGER.ob_balance,
-        issued_at: new Date().toISOString()
-      };
-      return payload;
-    }
-
-    // Markdown report
-    var lines = [];
-    lines.push('# ◊·κ Quarterly Bloom Report');
-    lines.push('');
-    lines.push('**Tool:** ' + NODE.name + ' · prime ' + NODE.prime + ' · `' + NODE.id + '`');
-    lines.push('**Period:** ' + startDate + ' → ' + endDate);
-    lines.push('**Issued:** ' + new Date().toISOString());
-    lines.push('');
-    lines.push('---');
-    lines.push('');
-    lines.push('## Headline');
-    lines.push('');
-    lines.push('- **Total events:** ' + totalEvents);
-    lines.push('- **Contribution weight:** ' + totalContribution);
-    lines.push('- **Bloom shape:** ' + shapeName + ' (peak in ' + RINGS[peakIdx].v + ' · ' + RINGS[peakIdx].anat + ')');
-    lines.push('- **BSV anchors this period:** ' + anchoredCount);
-    if (LEDGER.ob_balance) {
-      lines.push('- **$KONO balance:** ' + LEDGER.ob_balance.balance);
-    }
-    lines.push('');
-    lines.push('## Bloom signature');
-    lines.push('');
-    lines.push('```');
-    lines.push('Ring   Anatomy   Earning verb   Count   %');
-    lines.push('────   ───────   ────────────   ─────   ────');
-    RINGS.forEach(function(r, i){
-      var n = qBloom[i];
-      var pct = totalContribution > 0 ? (n / totalContribution * 100).toFixed(1) + '%' : '—';
-      lines.push(r.v + '    ' + r.anat.padEnd(9) + r.verb.padEnd(14) + ' ' + String(n).padStart(5) + '   ' + pct);
-    });
-    lines.push('```');
-    lines.push('');
-    lines.push('## Bloom prime-product (identity)');
-    lines.push('');
-    lines.push('`' + primesProduct + '`');
-    lines.push('');
-    lines.push('_This integer is your tool\'s unique cognitive contribution signature for the period._');
-    lines.push('');
-    lines.push('## Top 10 actions');
-    lines.push('');
-    topList.forEach(function(t){ lines.push('- `' + t[0] + '` × ' + t[1]); });
-    lines.push('');
-    lines.push('## Verification');
-    lines.push('');
-    lines.push('- KCC key: `' + KEY + '`');
-    lines.push('- Ledger head: `' + (LEDGER.head || '∅') + '`');
-    lines.push('- Anchors written to BSV: ' + anchoredCount);
-    lines.push('');
-    lines.push('---');
-    lines.push('');
-    lines.push('_Generated by KCC shim v3 · Ω(KCC) v18 · part of the Fall* estate._');
-    return lines.join('\n');
-  }
-
-  // ── public API ────────────────────────────────
-  window.kcc = {
-    emit: emit, bloom: bloom, shape: shape, exportProof: exportProof, rings: RINGS,
-    ledger: function(){ return { events: LEDGER.events.slice(), head: LEDGER.head, anchors: (LEDGER.anchors||[]).slice() }; },
-    clear: function(){ if (confirm('Clear KCC ledger for ' + NODE.id + '? Cannot undo.')) { LEDGER = { events:[], head:null, last_export:null, ob_balance:null, ob_last_sync:null, anchors:[] }; persist(); updateBadge(); } },
-    showLedger: showLedger,
-    kccKey: function(){ return KEY; },
-    onlybrains: function(){ return LEDGER.ob_balance; },
-    exportBloomReport: exportBloomReport,
-    // OnlyBrains REST client
-    syncOnlyBrains: syncOnlyBrains,
-    reason: reason, anchor: anchor, oracle: oracle, mintNft: mintNft,
-    queryTags: queryTags, quote: quote, swap: swap,
-    rates: rates, tiers: tiers, chain: chain, fnList: fnList, wallet: wallet
-  };
-
-  // ── boot ──────────────────────────────────────
-  (async function(){
-    if (document.readyState === 'loading') {
-      await new Promise(function(r){ document.addEventListener('DOMContentLoaded', r, { once:true }); });
-    }
-    injectBadge();
-    var todayKey = 'kcc_open_' + new Date().toISOString().slice(0,10);
-    if (!sessionStorage.getItem(todayKey)) { sessionStorage.setItem(todayKey, '1'); emit('app:open', 0, 1); }
-    var lastSync = LEDGER.ob_last_sync || 0;
-    if (Date.now() - lastSync > 3600 * 1000) syncOnlyBrains();
-    try { console.log('%c◊·κ KCC v3', 'color:#c2a060;font-weight:bold',
-      NODE.name + ' · ' + LEDGER.events.length + ' events · shape: ' + shape().shape + ' · key: ' + KEY); } catch(_){}
-  })();
-})();
+window.KONOMI = { active: true, tier: 'sovereign' };
+try { new BroadcastChannel('fall-signal').postMessage({ source: 'trilogy-forge', type: 'hello', ts: Date.now() }); } catch (e) {}
 </script>
-<!-- /◊·κ KCC LEDGER -->
-
-<!-- ◊·κ LLM CASCADE — T0→T4 sovereign fallback (drop-in, no deps except optional WebLLM ESM)
-  T0  · deterministic / template fallback (always works, never fails)
-  T1  · user's own API key (Anthropic / OpenAI / Google · stored in localStorage)
-  T2  · same-origin mesh peer (BroadcastChannel('fallmesh') · ask other tabs)
-  T3  · OnlyBrains /api/reason (paid via $KONO · uses window.kcc.reason)
-  T4  · WebLLM in-browser (Llama-3.2-3B by default · ~1.7GB one-time download · runs offline)
-
-  Public API:
-    window.llm.ask(prompt, opts)         → { provider, tier, text, ms } | { error }
-    window.llm.providers()               → { anthropic:bool, openai:bool, google:bool, mesh:bool, onlybrains:bool, webllm:'ready'|'downloading'|'not-loaded' }
-    window.llm.setKey(provider, key)     → stores key
-    window.llm.preloadWebLLM(modelId?)   → kicks off WebLLM download
-    window.llm.tier()                    → 'T1' / 'T2' / 'T3' / 'T4' / 'T0' — current default tier
-    window.llm.config                    → { preferred: ['anthropic','onlybrains','webllm','t0'] }
--->
-<script>
-(function llmCascade(){
-  if (window.llm) return;
-
-  var STORE_KEY = 'llm_cascade_v1';
-  var STATE = {
-    keys: {},                  // { anthropic: 'sk-ant-...', openai: '...', google: '...' }
-    webllm: { status: 'not-loaded', model: null, progress: 0, message: '' },
-    // T1 FallCore (local proxy) → T1 user keys → T3 OnlyBrains → T4 WebLLM → T2 mesh → T0 fallback
-    preferred: ['fallcore', 'anthropic', 'openai', 'google', 'onlybrains', 'webllm', 'mesh', 't0'],
-    fallcore_endpoint: '',   // e.g. 'http://localhost:11434' or 'https://ai.acme.internal'
-    log: []                    // last 50 calls: { t, provider, tier, ms, ok, prompt_chars }
-  };
-  try {
-    var raw = localStorage.getItem(STORE_KEY);
-    if (raw) STATE = Object.assign(STATE, JSON.parse(raw));
-  } catch(_){}
-  function persist(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(STATE)); } catch(_){} }
-
-  function trace(provider, tier, ms, ok, prompt) {
-    STATE.log.unshift({ t: Date.now(), provider: provider, tier: tier, ms: ms, ok: !!ok, prompt_chars: (prompt || '').length });
-    if (STATE.log.length > 50) STATE.log.length = 50;
-    persist();
-    if (window.kcc) {
-      // R5 verify when AI returns useful output; R0 compute on every call
-      window.kcc.emit('llm:' + provider + (ok ? '' : ':fail'), ok ? 5 : 0, ok ? 1 : 0.2, { tier: tier, ms: ms });
-    }
-  }
-
-  function withTimeout(promise, ms, label) {
-    return Promise.race([
-      promise,
-      new Promise(function(_, rej){ setTimeout(function(){ rej(new Error((label||'op') + ' timeout')); }, ms || 30000); })
-    ]);
-  }
-
-  // ── T1 providers — direct from browser (CORS-allowed endpoints) ──
-  var T1 = {
-    // FallCore: company's on-prem brain · same API shape as Anthropic
-    // If configured, this tries FIRST · transparent fallthrough if low confidence
-    fallcore: {
-      tier: 'T1',
-      label: 'FallCore (on-prem)',
-      available: function(){ return !!STATE.fallcore_endpoint; },
-      hasKey: function(){ return !!STATE.fallcore_endpoint; },
-      ask: async function(prompt, opts){
-        if (!STATE.fallcore_endpoint) throw new Error('no fallcore endpoint');
-        var url = STATE.fallcore_endpoint.replace(/\/$/, '') + '/v1/messages';
-        var r = await withTimeout(fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': STATE.keys.anthropic || 'fallcore-cascade',
-            'anthropic-version': '2023-06-01',
-            'x-fallcore-tool': (window.NODE ? window.NODE.id : 'anon')
-          },
-          body: JSON.stringify({
-            model: opts.model || 'claude-sonnet-4-20250514',  // FallCore picks local first regardless
-            max_tokens: opts.max_tokens || 2048,
-            system: opts.system || 'You are a helpful assistant for ' + (window.NODE ? window.NODE.name : 'this app') + '. Reply concisely.',
-            messages: [{ role: 'user', content: prompt }],
-            fallcore_options: opts.fallcore_options || {}
-          })
-        }), 60000, 'fallcore');
-        if (!r.ok) throw new Error('fallcore ' + r.status);
-        var j = await r.json();
-        return j.content[0].text;
-      }
-    },
-    anthropic: {
-      tier: 'T1',
-      label: 'Anthropic',
-      hasKey: function(){ return !!STATE.keys.anthropic; },
-      ask: async function(prompt, opts){
-        if (!STATE.keys.anthropic) throw new Error('no anthropic key');
-        var r = await withTimeout(fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': STATE.keys.anthropic,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
-          body: JSON.stringify({
-            model: opts.model || 'claude-sonnet-4-20250514',
-            max_tokens: opts.max_tokens || 2048,
-            system: opts.system || 'You are a helpful assistant for ' + (window.NODE ? window.NODE.name : 'this app') + '. Reply concisely.',
-            messages: [{ role: 'user', content: prompt }]
-          })
-        }), 45000, 'anthropic');
-        if (!r.ok) throw new Error('anthropic ' + r.status);
-        var j = await r.json();
-        return j.content[0].text;
-      }
-    },
-    openai: {
-      tier: 'T1',
-      label: 'OpenAI',
-      hasKey: function(){ return !!STATE.keys.openai; },
-      ask: async function(prompt, opts){
-        if (!STATE.keys.openai) throw new Error('no openai key');
-        var r = await withTimeout(fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + STATE.keys.openai },
-          body: JSON.stringify({
-            model: opts.model || 'gpt-4o-mini',
-            max_tokens: opts.max_tokens || 2048,
-            messages: [
-              { role: 'system', content: opts.system || 'You are a helpful assistant. Reply concisely.' },
-              { role: 'user', content: prompt }
-            ]
-          })
-        }), 45000, 'openai');
-        if (!r.ok) throw new Error('openai ' + r.status);
-        var j = await r.json();
-        return j.choices[0].message.content;
-      }
-    },
-    google: {
-      tier: 'T1',
-      label: 'Google',
-      hasKey: function(){ return !!STATE.keys.google; },
-      ask: async function(prompt, opts){
-        if (!STATE.keys.google) throw new Error('no google key');
-        var model = opts.model || 'gemini-2.0-flash';
-        var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(STATE.keys.google);
-        var r = await withTimeout(fetch(url, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role:'user', parts: [{ text: (opts.system ? opts.system + '\n\n' : '') + prompt }] }],
-            generationConfig: { maxOutputTokens: opts.max_tokens || 2048 }
-          })
-        }), 45000, 'google');
-        if (!r.ok) throw new Error('google ' + r.status);
-        var j = await r.json();
-        return j.candidates[0].content.parts[0].text;
-      }
-    }
-  };
-
-  // ── T2 mesh peer (ask another tab) ──
-  var T2 = {
-    mesh: {
-      tier: 'T2',
-      label: 'Mesh peer',
-      available: function(){ try { return !!window.BroadcastChannel; } catch(_){ return false; } },
-      ask: function(prompt, opts){
-        return new Promise(function(resolve, reject){
-          if (!window.BroadcastChannel) return reject(new Error('no BroadcastChannel'));
-          var ch;
-          try { ch = new BroadcastChannel('fallmesh'); }
-          catch(e){ return reject(new Error('mesh open failed')); }
-          var reqId = 'llmreq_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-          var handler = function(e){
-            var m = e.data;
-            if (m && m.type === 'llm:response' && m.req === reqId) {
-              ch.removeEventListener('message', handler);
-              ch.close();
-              if (m.text) resolve(m.text);
-              else reject(new Error(m.error || 'mesh empty'));
-            }
-          };
-          ch.addEventListener('message', handler);
-          try {
-            ch.postMessage({
-              type: 'llm:request', req: reqId,
-              from: window.NODE ? window.NODE.id : 'anon',
-              prompt: prompt, opts: opts || {}
-            });
-          } catch(e){ ch.close(); return reject(e); }
-          setTimeout(function(){
-            try { ch.removeEventListener('message', handler); ch.close(); } catch(_){}
-            reject(new Error('mesh timeout'));
-          }, opts.mesh_timeout || 2000);
-        });
-      }
-    }
-  };
-
-  // ── T3 OnlyBrains (via window.kcc) ──
-  var T3 = {
-    onlybrains: {
-      tier: 'T3',
-      label: 'OnlyBrains',
-      available: function(){ return !!(window.kcc && window.kcc.reason); },
-      ask: async function(prompt, opts){
-        if (!window.kcc || !window.kcc.reason) throw new Error('kcc not loaded');
-        var r = await withTimeout(window.kcc.reason(prompt, opts.strategy || 'CoT'), 60000, 'onlybrains');
-        if (r && r.error) throw new Error('onlybrains: ' + r.error);
-        // Shape: response varies by OnlyBrains API · normalise
-        if (typeof r === 'string') return r;
-        return r.text || r.answer || r.result || r.output || JSON.stringify(r);
-      }
-    }
-  };
-
-  // ── T4 WebLLM (in-browser, requires WebGPU) ──
-  var WEBLLM_DEFAULT_MODEL = 'Llama-3.2-3B-Instruct-q4f16_1-MLC';
-  var webllmEngine = null;
-  var webllmLoadPromise = null;
-  function hasWebGPU(){ return typeof navigator !== 'undefined' && !!navigator.gpu; }
-  async function loadWebLLM(modelId) {
-    if (webllmEngine) return webllmEngine;
-    if (webllmLoadPromise) return webllmLoadPromise;
-    if (!hasWebGPU()) throw new Error('WebGPU unavailable in this browser');
-    STATE.webllm.status = 'downloading';
-    STATE.webllm.model = modelId || WEBLLM_DEFAULT_MODEL;
-    STATE.webllm.progress = 0;
-    STATE.webllm.message = 'starting…';
-    persist();
-    updateUI();
-    webllmLoadPromise = (async function(){
-      var mod = await import('https://esm.run/@mlc-ai/web-llm');
-      var fn = mod.CreateMLCEngine || mod.createMLCEngine;
-      if (!fn) throw new Error('WebLLM API not found in module');
-      webllmEngine = await fn(STATE.webllm.model, {
-        initProgressCallback: function(p){
-          STATE.webllm.progress = p.progress || 0;
-          STATE.webllm.message = p.text || '';
-          persist();
-          updateUI();
-        }
-      });
-      STATE.webllm.status = 'ready';
-      STATE.webllm.message = 'ready';
-      persist();
-      updateUI();
-      return webllmEngine;
-    })().catch(function(e){
-      STATE.webllm.status = 'error';
-      STATE.webllm.message = e.message || String(e);
-      persist();
-      updateUI();
-      webllmLoadPromise = null;
-      throw e;
-    });
-    return webllmLoadPromise;
-  }
-  var T4 = {
-    webllm: {
-      tier: 'T4',
-      label: 'WebLLM (offline)',
-      available: function(){ return hasWebGPU(); },
-      ask: async function(prompt, opts){
-        var eng = await loadWebLLM(opts.model);
-        var r = await eng.chat.completions.create({
-          messages: [
-            { role: 'system', content: opts.system || 'You are a helpful assistant. Reply concisely.' },
-            { role: 'user', content: prompt }
-          ],
-          max_tokens: opts.max_tokens || 1024,
-          temperature: opts.temperature == null ? 0.7 : opts.temperature
-        });
-        return r.choices[0].message.content;
-      }
-    }
-  };
-
-  // ── T0 deterministic fallback (last resort, never throws) ──
-  var T0 = {
-    t0: {
-      tier: 'T0',
-      label: 'Offline fallback',
-      available: function(){ return true; },
-      ask: async function(prompt, opts){
-        if (opts.fallback) return typeof opts.fallback === 'function' ? opts.fallback(prompt) : opts.fallback;
-        return '[T0] No AI provider available. Add an API key (Settings → AI Cascade), enable WebLLM, or check internet connection. Prompt was: ' + String(prompt || '').slice(0, 200);
-      }
-    }
-  };
-
-  var ALL = Object.assign({}, T1, T2, T3, T4, T0);
-
-  // Listen for mesh peer requests — if other tabs ask us, answer using our T1 provider only
-  // (don't recurse into mesh asking mesh asking mesh)
-  try {
-    var peerCh = new BroadcastChannel('fallmesh');
-    peerCh.addEventListener('message', async function(e){
-      var m = e.data;
-      if (!m || m.type !== 'llm:request' || m.from === (window.NODE && window.NODE.id)) return;
-      // Try T1 only — don't recurse
-      for (var i = 0; i < STATE.preferred.length; i++) {
-        var p = STATE.preferred[i];
-        if (p === 'mesh' || p === 't0' || !ALL[p]) continue;
-        if (ALL[p].tier !== 'T1') continue;
-        if (ALL[p].hasKey && !ALL[p].hasKey()) continue;
-        try {
-          var text = await ALL[p].ask(m.prompt, m.opts || {});
-          peerCh.postMessage({ type: 'llm:response', req: m.req, text: text, served_by: window.NODE && window.NODE.id });
-          return;
-        } catch(_){}
-      }
-      // Couldn't help — silently ignore
-    });
-  } catch(_){}
-
-  // ── Main ask() — walks the cascade ──
-  async function ask(prompt, opts) {
-    opts = opts || {};
-    var order = opts.order || STATE.preferred;
-    var skipped = [];
-    for (var i = 0; i < order.length; i++) {
-      var name = order[i];
-      var p = ALL[name];
-      if (!p) continue;
-      if (p.available && !p.available()) { skipped.push({ name: name, reason: 'unavailable' }); continue; }
-      if (p.hasKey && !p.hasKey()) { skipped.push({ name: name, reason: 'no key' }); continue; }
-      var t0 = Date.now();
-      try {
-        var text = await p.ask(prompt, opts);
-        var ms = Date.now() - t0;
-        trace(name, p.tier, ms, true, prompt);
-        return { provider: name, tier: p.tier, label: p.label, text: text, ms: ms, skipped: skipped };
-      } catch(e) {
-        var ms2 = Date.now() - t0;
-        trace(name, p.tier, ms2, false, prompt);
-        skipped.push({ name: name, reason: e.message || String(e), ms: ms2 });
-      }
-    }
-    return { error: 'all providers failed', skipped: skipped };
-  }
-
-  function providers() {
-    return {
-      fallcore: !!STATE.fallcore_endpoint,
-      fallcore_endpoint: STATE.fallcore_endpoint,
-      anthropic: !!STATE.keys.anthropic,
-      openai: !!STATE.keys.openai,
-      google: !!STATE.keys.google,
-      mesh: !!window.BroadcastChannel,
-      onlybrains: !!(window.kcc && window.kcc.reason),
-      webllm_supported: hasWebGPU(),
-      webllm_status: STATE.webllm.status,
-      webllm_progress: STATE.webllm.progress,
-      webllm_model: STATE.webllm.model
-    };
-  }
-
-  function setKey(provider, key) {
-    STATE.keys[provider] = key;
-    persist();
-    updateUI();
-  }
-  function setFallcoreEndpoint(url) {
-    STATE.fallcore_endpoint = String(url || '').trim();
-    persist();
-    updateUI();
-  }
-
-  function currentTier() {
-    // Highest-priority tier that will ACTUALLY answer (mesh excluded since it's peer-dependent)
-    var prov = providers();
-    if (prov.fallcore) return 'T1·FallCore';
-    if (prov.anthropic || prov.openai || prov.google) return 'T1';
-    if (prov.onlybrains) return 'T3';
-    if (prov.webllm_status === 'ready') return 'T4';
-    return 'T0';
-  }
-
-  // ── Floating cascade-status badge ──
-  var badge = null;
-  function injectBadge(){
-    if (document.getElementById('llm-badge')) return;
-    var el = document.createElement('div');
-    el.id = 'llm-badge';
-    el.style.cssText = 'position:fixed;bottom:12px;left:340px;background:rgba(0,0,0,.65);color:#dbe1ea;padding:5px 10px;border-radius:6px;font-family:monospace;font-size:11px;cursor:pointer;z-index:9999;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px);display:flex;align-items:center;gap:6px';
-    el.title = 'LLM Cascade · click for status';
-    el.onclick = function(){ showCascadeUI(); };
-    document.body.appendChild(el);
-    badge = el;
-    updateUI();
-  }
-  function updateUI(){
-    if (!badge) return;
-    var tier = currentTier();
-    var colour = tier === 'T1' ? '#22c55e' : tier === 'T2' ? '#8b5cf6' : tier === 'T3' ? '#d4af37' : tier === 'T4' ? '#f59e0b' : '#8a8a8a';
-    var label = 'AI · ' + tier;
-    if (STATE.webllm.status === 'downloading') {
-      label = 'WebLLM ' + Math.round((STATE.webllm.progress || 0) * 100) + '%';
-      colour = '#f59e0b';
-    }
-    badge.innerHTML = '<span style="color:' + colour + ';font-weight:700">●</span><span>' + label + '</span>';
-  }
-
-  // ── Settings modal ──
-  function showCascadeUI(){
-    var prov = providers();
-    var tier = currentTier();
-    var fallcoreHtml = '<div style="background:#0c0e12;border:1px solid #2a2f3a;border-radius:6px;padding:10px;margin-bottom:10px;font-size:12px">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong style="color:#22c55e">⚡ FallCore (on-prem brain)</strong><span style="color:#8a8a8a;font-size:11px">' + (STATE.fallcore_endpoint ? STATE.fallcore_endpoint : 'not set') + '</span></div>' +
-      '<div style="font-size:11px;color:#a8b0bc;margin-bottom:8px">Point at your company’s on-prem brain. Cascades local-first, falls through to frontier only on low confidence. Same API as Anthropic. Self-improves over time from your reviewer corrections.</div>' +
-      '<div style="display:flex;gap:6px;align-items:center">' +
-      '<input type="text" id="llm-fallcore-url" placeholder="https://ai.acme.internal or http://localhost:11434" value="' + (STATE.fallcore_endpoint || '') + '" style="flex:1;background:#0c0e12;color:#dbe1ea;border:1px solid #2a2f3a;border-radius:5px;padding:5px 8px;font-family:monospace;font-size:11px">' +
-      '<button id="llm-fallcore-save" style="background:#22c55e;color:#000;border:none;padding:5px 12px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600">save</button>' +
-      (STATE.fallcore_endpoint ? '<button id="llm-fallcore-clear" style="background:transparent;color:#ef4444;border:1px solid #ef4444;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:11px">clear</button>' : '') +
-      '</div></div>';
-    var keysHtml = ['anthropic','openai','google'].map(function(p){
-      var has = !!STATE.keys[p];
-      var label = p[0].toUpperCase() + p.slice(1);
-      return '<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px"><label style="width:90px;font-size:12px;color:#a8b0bc">' + label + '</label><input type="password" id="llm-key-' + p + '" placeholder="' + (has ? '••• key saved' : 'paste API key') + '" style="flex:1;background:#0c0e12;color:#dbe1ea;border:1px solid #2a2f3a;border-radius:5px;padding:5px 8px;font-family:monospace;font-size:11px"><button data-save="' + p + '" style="background:#5b8def;color:#fff;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px">save</button>' + (has ? '<button data-clear="' + p + '" style="background:transparent;color:#ef4444;border:1px solid #ef4444;padding:4px 8px;border-radius:5px;cursor:pointer;font-size:11px">clear</button>' : '') + '</div>';
-    }).join('');
-    var webllmStatus = STATE.webllm.status;
-    var webllmHtml = '<div style="background:#0c0e12;border:1px solid #2a2f3a;border-radius:6px;padding:10px;margin:10px 0;font-size:12px">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong style="color:#f59e0b">⚡ WebLLM (in-browser, offline-capable)</strong><span style="color:#8a8a8a;font-size:11px">' + (STATE.webllm.model || WEBLLM_DEFAULT_MODEL) + '</span></div>' +
-      '<div style="font-size:11px;color:#a8b0bc;margin-bottom:8px">Downloads a 1.7GB model once. After that all AI runs in your browser using WebGPU — no internet needed. Status: <strong style="color:' + (webllmStatus === 'ready' ? '#22c55e' : webllmStatus === 'downloading' ? '#f59e0b' : '#8a8a8a') + '">' + webllmStatus + '</strong>' + (STATE.webllm.message ? ' · ' + STATE.webllm.message : '') + '</div>' +
-      (webllmStatus === 'downloading' ? '<div style="height:6px;background:#1f2937;border-radius:3px;overflow:hidden;margin-bottom:6px"><div style="height:100%;background:#f59e0b;width:' + Math.round((STATE.webllm.progress || 0) * 100) + '%"></div></div>' : '') +
-      '<div style="display:flex;gap:6px"><button id="llm-webllm-download" ' + (webllmStatus === 'downloading' || webllmStatus === 'ready' ? 'disabled' : '') + ' style="background:#f59e0b;color:#000;border:none;padding:6px 12px;border-radius:5px;cursor:' + (webllmStatus === 'downloading' || webllmStatus === 'ready' ? 'not-allowed;opacity:.5' : 'pointer') + ';font-size:11px;font-weight:600">' + (webllmStatus === 'ready' ? '✓ loaded' : webllmStatus === 'downloading' ? 'downloading…' : 'download model (1.7GB)') + '</button>' +
-      (hasWebGPU() ? '<span style="font-size:10px;color:#22c55e;align-self:center">✓ WebGPU supported</span>' : '<span style="font-size:10px;color:#ef4444;align-self:center">✗ WebGPU not available in this browser</span>') +
-      '</div></div>';
-    var logHtml = STATE.log.slice(0, 6).map(function(l){
-      var d = new Date(l.t).toLocaleString();
-      var ok = l.ok ? '✓' : '✗';
-      var colour = l.ok ? '#22c55e' : '#ef4444';
-      return '<div style="font-size:10px;color:#a8b0bc;padding:2px 0"><span style="color:#8a8a8a">' + d + '</span> · <span style="color:' + colour + '">' + ok + '</span> ' + l.provider + ' (' + l.tier + ') · ' + l.ms + 'ms · ' + l.prompt_chars + ' chars in</div>';
-    }).join('') || '<div style="color:#8a8a8a;font-size:11px">no calls yet</div>';
-
-    var modal = document.createElement('div');
-    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,sans-serif';
-    modal.innerHTML='<div style="background:#161821;border:1px solid #2a2f3a;border-radius:12px;padding:22px;max-width:580px;width:100%;color:#dbe1ea;max-height:90vh;overflow:auto">' +
-      '<h3 style="margin:0 0 4px;color:#e6e8ee">◊·κ LLM Cascade</h3>' +
-      '<p style="margin:0 0 12px;font-size:12px;color:#8a8a8a">Current tier: <strong style="color:' + (tier==='T1'?'#22c55e':tier==='T2'?'#8b5cf6':tier==='T3'?'#d4af37':tier==='T4'?'#f59e0b':'#8a8a8a') + '">' + tier + '</strong> · fallback order: ' + STATE.preferred.join(' → ') + '</p>' +
-      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:8px 0 6px">T1 · FallCore (your on-prem brain)</h4>' +
-      fallcoreHtml +
-      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px">T1 · direct API keys (browser-only, never leaves device)</h4>' +
-      keysHtml +
-      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 6px">T4 · WebLLM offline</h4>' +
-      webllmHtml +
-      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 6px">recent calls</h4>' +
-      logHtml +
-      '<div style="display:flex;gap:8px;margin-top:14px"><button id="llm-test" style="background:#5b8def;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px">test cascade</button><button id="llm-close" style="background:transparent;color:#8a8a8a;border:1px solid #2a2f3a;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px">close</button></div>' +
-      '<div id="llm-test-result" style="margin-top:10px;font-size:11px;color:#a8b0bc;font-family:monospace;display:none;background:#06080c;border:1px solid #1f2937;border-radius:4px;padding:8px;max-height:200px;overflow:auto"></div>' +
-      '</div>';
-    document.body.appendChild(modal);
-    modal.querySelector('#llm-close').onclick = function(){ modal.remove(); };
-    modal.onclick = function(e){ if (e.target === modal) modal.remove(); };
-    // FallCore endpoint save/clear
-    var fcSave = modal.querySelector('#llm-fallcore-save');
-    if (fcSave) fcSave.onclick = function(){
-      var url = modal.querySelector('#llm-fallcore-url').value.trim();
-      setFallcoreEndpoint(url);
-      modal.remove(); showCascadeUI();
-    };
-    var fcClear = modal.querySelector('#llm-fallcore-clear');
-    if (fcClear) fcClear.onclick = function(){
-      setFallcoreEndpoint('');
-      modal.remove(); showCascadeUI();
-    };
-    modal.querySelectorAll('[data-save]').forEach(function(b){
-      b.onclick = function(){
-        var p = b.getAttribute('data-save');
-        var inp = modal.querySelector('#llm-key-' + p);
-        if (inp.value) { setKey(p, inp.value); modal.remove(); showCascadeUI(); }
-      };
-    });
-    modal.querySelectorAll('[data-clear]').forEach(function(b){
-      b.onclick = function(){ var p = b.getAttribute('data-clear'); delete STATE.keys[p]; persist(); updateUI(); modal.remove(); showCascadeUI(); };
-    });
-    var dl = modal.querySelector('#llm-webllm-download');
-    if (dl) dl.onclick = function(){ loadWebLLM().then(function(){ modal.remove(); showCascadeUI(); }).catch(function(e){ alert('WebLLM load failed: ' + e.message); }); };
-    var test = modal.querySelector('#llm-test');
-    test.onclick = async function(){
-      var res = modal.querySelector('#llm-test-result');
-      res.style.display = 'block';
-      res.textContent = 'testing… asking "Say OK in one word"';
-      var r = await ask('Say OK in one word.', { max_tokens: 32 });
-      res.textContent = r.error ? '✗ ' + r.error + '\nSkipped: ' + JSON.stringify(r.skipped || [], null, 2) : '✓ ' + r.provider + ' (' + r.tier + ') · ' + r.ms + 'ms\n\n' + r.text;
-    };
-  }
-
-  // Boot
-  (function boot(){
-    function ready(){
-      injectBadge();
-      try { console.log('%c◊·κ LLM cascade', 'color:#5b8def;font-weight:bold', 'current tier:', currentTier(), '· providers:', providers()); } catch(_){}
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once:true });
-    else ready();
-  })();
-
-  window.llm = {
-    ask: ask,
-    providers: providers,
-    setKey: setKey,
-    setFallcoreEndpoint: setFallcoreEndpoint,
-    preloadWebLLM: loadWebLLM,
-    tier: currentTier,
-    config: { preferred: STATE.preferred },
-    showSettings: showCascadeUI,
-    _state: STATE
-  };
-})();
-</script>
-<!-- /◊·κ LLM CASCADE -->
-<!-- ◊·κ FALL-API SHIM — inter-tool API surface · cli(cmd) layer
-  Turns every Fall* HTML into an API endpoint other tools (in other tabs)
-  can call without a server. Same-origin BroadcastChannel transport.
-
-  Per Thomas's 5-turtle stack:
-    sys(params) → cmd(sys) → cli(cmd) → api(cli) → mcp(api)
-  This is the cli(cmd) / api(cli) layer for sovereign HTMLs.
-
-  Public API:
-    window.fall_api.register(resource, handler)   — expose a resource
-    window.fall_api.list()                        — what this tool exposes
-    window.fall.call(tool, resource, params)      — call another tool's API
-    window.fall.callMany(...)                     — fan out across mesh
-    window.fall.discover()                        — list all visible Fall* tools + their APIs
-
-  Depends on: window.NODE (mesh shim) for identity + BroadcastChannel.
--->
-<script>
-(function fallApiShim(){
-  if (!window.NODE) return;
-  if (window.fall_api) return; // already loaded
-
-  var REGISTRY = {};   // resource → handler
-  var PEERS = {};      // tool_id → { last_seen, resources, prime, name }
-  var PEER_TTL = 30000;
-
-  // Open dedicated channel for API traffic (separate from fallmesh events)
-  var channel = null;
-  try { channel = new BroadcastChannel('fall-api'); }
-  catch (_) { return; } // browser too old
-
-  function emit(msg) {
-    try { channel.postMessage(Object.assign({ from: NODE.id, prime: NODE.prime, t: Date.now() }, msg)); } catch (_){}
-  }
-
-  // ── Server side (this tool exposes resources) ──
-  window.fall_api = {
-    register: function(resource, handler, meta) {
-      if (typeof resource !== 'string' || typeof handler !== 'function') return false;
-      REGISTRY[resource] = { handler: handler, meta: meta || {} };
-      // Broadcast discovery
-      emit({ type: 'fall-api:register', resource: resource, name: NODE.name, meta: meta || {} });
-      // Track in KCC (R6 govern — exposing a public surface)
-      if (window.kcc) window.kcc.emit('api:register:' + resource, 6, 0.5);
-      return true;
-    },
-    unregister: function(resource) {
-      delete REGISTRY[resource];
-      emit({ type: 'fall-api:unregister', resource: resource });
-    },
-    list: function() {
-      return Object.keys(REGISTRY).map(function(r){
-        return { resource: r, meta: REGISTRY[r].meta };
-      });
-    }
-  };
-
-  // ── Handle incoming requests ──
-  channel.onmessage = function(e) {
-    var m = e.data;
-    if (!m || m.from === NODE.id) return;
-
-    // Track peer
-    if (m.type && m.from) {
-      PEERS[m.from] = PEERS[m.from] || { resources: {} };
-      PEERS[m.from].last_seen = Date.now();
-      PEERS[m.from].prime = m.prime;
-      PEERS[m.from].name = m.name || PEERS[m.from].name;
-    }
-
-    // Discovery broadcasts
-    if (m.type === 'fall-api:register' && m.from && m.resource) {
-      PEERS[m.from].resources[m.resource] = m.meta || {};
-      return;
-    }
-    if (m.type === 'fall-api:unregister' && m.from && m.resource) {
-      if (PEERS[m.from]) delete PEERS[m.from].resources[m.resource];
-      return;
-    }
-    if (m.type === 'fall-api:hello') {
-      // Reply with our capabilities
-      emit({
-        type: 'fall-api:announce',
-        name: NODE.name,
-        resources: Object.keys(REGISTRY).reduce(function(acc, k){ acc[k] = REGISTRY[k].meta || {}; return acc; }, {})
-      });
-      return;
-    }
-    if (m.type === 'fall-api:announce' && m.from) {
-      PEERS[m.from].resources = m.resources || {};
-      return;
-    }
-
-    // Request targeted at us
-    if (m.type === 'fall-api:request' && m.target === NODE.id) {
-      var entry = REGISTRY[m.resource];
-      if (!entry) {
-        emit({ type: 'fall-api:response', req: m.req, target: m.from, error: 'resource not found: ' + m.resource });
-        return;
-      }
-      try {
-        Promise.resolve(entry.handler(m.params || {}, { caller: m.from, callerPrime: m.callerPrime }))
-          .then(function(result){
-            emit({ type: 'fall-api:response', req: m.req, target: m.from, ok: true, result: result, resource: m.resource });
-            if (window.kcc) window.kcc.emit('api:served:' + m.resource, 4, 1, { caller: m.from });
-          })
-          .catch(function(err){
-            emit({ type: 'fall-api:response', req: m.req, target: m.from, error: err.message || String(err) });
-          });
-      } catch (e) {
-        emit({ type: 'fall-api:response', req: m.req, target: m.from, error: e.message });
-      }
-      return;
-    }
-  };
-
-  // ── Client side (this tool calls another tool's API) ──
-  window.fall = {
-    call: function(tool, resource, params, opts) {
-      opts = opts || {};
-      return new Promise(function(resolve, reject){
-        if (!channel) return reject(new Error('no BroadcastChannel'));
-        var req = 'fr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-        var done = false;
-        var handler = function(e) {
-          var m = e.data;
-          if (m && m.type === 'fall-api:response' && m.req === req) {
-            done = true;
-            channel.removeEventListener('message', handler);
-            if (m.error) return reject(new Error(m.error));
-            resolve(m.result);
-          }
-        };
-        channel.addEventListener('message', handler);
-        emit({ type: 'fall-api:request', req: req, target: tool, resource: resource, params: params, callerPrime: NODE.prime });
-        if (window.kcc) window.kcc.emit('api:call:' + tool + '/' + resource, 1, 0.5);
-        setTimeout(function(){
-          if (done) return;
-          channel.removeEventListener('message', handler);
-          reject(new Error('fall.call timeout · ' + tool + '/' + resource));
-        }, opts.timeout || 4000);
-      });
-    },
-
-    // Fan out: ask all peers that expose <resource>
-    callMany: function(resource, params, opts) {
-      var promises = Object.keys(PEERS)
-        .filter(function(p){ return PEERS[p].resources && PEERS[p].resources[resource]; })
-        .map(function(p){
-          return window.fall.call(p, resource, params, opts)
-            .then(function(r){ return { tool: p, ok: true, result: r }; })
-            .catch(function(e){ return { tool: p, ok: false, error: e.message }; });
-        });
-      return Promise.all(promises);
-    },
-
-    // List currently visible peers + their resources
-    discover: function() {
-      var now = Date.now();
-      var live = {};
-      Object.keys(PEERS).forEach(function(p){
-        if (now - PEERS[p].last_seen < PEER_TTL) live[p] = PEERS[p];
-      });
-      return live;
-    },
-
-    // Ask the network "what's out there"
-    refresh: function() {
-      emit({ type: 'fall-api:hello' });
-      return new Promise(function(r){ setTimeout(r, 600); }).then(function(){ return window.fall.discover(); });
-    }
-  };
-
-  // ── Boot · say hello to the network ──
-  (function boot(){
-    function ready(){
-      setTimeout(function(){
-        emit({ type: 'fall-api:hello', name: NODE.name });
-      }, 500);
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once:true });
-    else ready();
-  })();
-
-  try { console.log('%c◊·κ fall-api', 'color:#5b8def;font-weight:bold', NODE.name + ' · ready · register handlers via window.fall_api.register()'); } catch(_){}
-})();
-</script>
-<!-- /◊·κ FALL-API SHIM -->
-<!-- ◊·κ FALL-SW SHIM — Service Worker that turns sovereign HTML into an HTTP API
-  fetch('/api/&lt;tool&gt;/&lt;resource&gt;?param=...') from anywhere in this origin
-  → SW catches it → routes to whichever Fall* tab owns &lt;tool&gt; via the
-  fall-api channel → returns JSON Response.
-
-  Per Thomas's 5-turtle stack:
-    sys(params) → cmd(sys) → cli(cmd) → api(cli) → mcp(api)
-  This is the api(cli) layer · turns the cli into an HTTP-callable surface.
-
-  Browser-compatible. Requires:
-    · Service Workers (Chrome 40+, Safari 11.1+, Firefox 44+)
-    · BroadcastChannel API (already required by fall-api)
-
-  External callers (other tabs, native apps via localhost proxy, even other
-  domains via CORS) can now `fetch('https://your-host/api/gymos/members')`
-  and get a response — without any backend server.
-
-  Caveats:
-    · Same-origin only (this IS the sovereignty: no cross-origin to 3rd parties)
-    · Works only while AT LEAST ONE Fall* tab is open in the browser
-    · First request to /api/* requires SW to be installed (auto on first page load)
--->
-<script>
-(function fallSwShim(){
-  if (!window.NODE) return;
-  if (!('serviceWorker' in navigator)) {
-    try { console.log('%c◊·κ fall-sw', 'color:#8a8a8a', 'Service Workers not available · API surface is BroadcastChannel-only (no /api/* fetch interception)'); } catch(_){}
-    return;
-  }
-  if (window._fall_sw_installed) return;
-  window._fall_sw_installed = true;
-
-  // The SW code, as a string, served via Blob URL
-  var SW_CODE = `
-// ◊·κ FallCore Service Worker · v1
-// Intercepts /api/&lt;tool&gt;/&lt;resource&gt; · routes to clients
-const VERSION = '${Date.now()}';
-const TIMEOUT = 5000;
-
-self.addEventListener('install', function(e){
-  self.skipWaiting();
-});
-self.addEventListener('activate', function(e){
-  e.waitUntil(self.clients.claim());
-});
-
-self.addEventListener('fetch', function(event) {
-  var url = new URL(event.request.url);
-  // Only intercept same-origin /api/* paths
-  if (url.origin !== self.location.origin) return;
-  if (!url.pathname.startsWith('/api/')) return;
-
-  // Parse: /api/&lt;tool&gt;/&lt;resource&gt;
-  var parts = url.pathname.slice(5).split('/');
-  var tool = parts[0];
-  var resource = parts.slice(1).join('/');
-  if (!tool) return;
-
-  // Collect params from query + body
-  event.respondWith((async function(){
-    var params = {};
-    url.searchParams.forEach(function(v, k){ params[k] = v; });
-    if (event.request.method === 'POST') {
-      try {
-        var body = await event.request.json();
-        Object.assign(params, body || {});
-      } catch(_){}
-    }
-    // Ask any client tab to serve this
-    var clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    if (!clientList.length) {
-      return new Response(JSON.stringify({ error: 'no Fall* tab open · open the tool first' }), {
-        status: 503,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-    var req = 'sw_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-    var channel = new MessageChannel();
-    var responsePromise = new Promise(function(resolve, reject){
-      var t = setTimeout(function(){ reject(new Error('sw timeout')); }, TIMEOUT);
-      channel.port1.onmessage = function(e){
-        clearTimeout(t);
-        if (e.data && e.data.error) reject(new Error(e.data.error));
-        else resolve(e.data && e.data.result);
-      };
-    });
-    // Broadcast to all clients; the one that owns the tool responds
-    clientList.forEach(function(c){
-      try {
-        c.postMessage({ type: 'sw:api-request', req: req, tool: tool, resource: resource, params: params }, [channel.port2]);
-      } catch(_){}
-    });
-    try {
-      var result = await responsePromise;
-      return new Response(JSON.stringify(result), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', 'x-fallcore-sw': VERSION, 'Access-Control-Allow-Origin': '*' }
-      });
-    } catch (e) {
-      return new Response(JSON.stringify({ error: e.message }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-  })());
-});
-`;
-
-  // Each page listens for SW messages and forwards via fall-api
-  navigator.serviceWorker.addEventListener('message', function(e) {
-    var m = e.data;
-    if (!m || m.type !== 'sw:api-request') return;
-    var port = e.ports && e.ports[0];
-    if (!port) return;
-    // Only respond if WE own this tool
-    if (m.tool !== NODE.id) {
-      // Forward through fall-api BroadcastChannel to whichever tab DOES own it
-      if (!window.fall || !window.fall.call) {
-        port.postMessage({ error: 'no fall-api shim loaded' });
-        return;
-      }
-      window.fall.call(m.tool, m.resource, m.params)
-        .then(function(r){ port.postMessage({ result: r }); })
-        .catch(function(e){ port.postMessage({ error: e.message }); });
-      return;
-    }
-    // We own it: invoke directly
-    if (!window.fall_api || !window.fall_api.list) {
-      port.postMessage({ error: 'no fall_api registry' });
-      return;
-    }
-    // Pretend we're another tab and use fall.call to ourselves (cleanest path through the registry)
-    if (window.fall && window.fall.call) {
-      window.fall.call(NODE.id, m.resource, m.params)
-        .then(function(r){ port.postMessage({ result: r }); })
-        .catch(function(e){ port.postMessage({ error: e.message }); });
-    } else {
-      port.postMessage({ error: 'fall registry unavailable' });
-    }
-  });
-
-  // Register the SW from inline Blob (scope: this page's directory; for tools at root, this is the whole origin)
-  function registerSw() {
-    try {
-      var blob = new Blob([SW_CODE], { type: 'application/javascript' });
-      var swUrl = URL.createObjectURL(blob);
-      // Note: SW scope is restricted to its URL path. Inline SWs scope only to the page that registered them.
-      // For full /api/* origin scope, the SW needs to be served from the origin root with proper Service-Worker-Allowed header.
-      // This v1 ships scope-limited; v2 will deploy a real /sw.js to each Pages root.
-      navigator.serviceWorker.register(swUrl, { scope: './' })
-        .then(function(reg){
-          try { console.log('%c◊·κ fall-sw', 'color:#5b8def;font-weight:bold', NODE.name + ' · Service Worker registered at scope ' + reg.scope); } catch(_){}
-          if (window.kcc) window.kcc.emit('sw:registered', 6, 1, { scope: reg.scope });
-        })
-        .catch(function(e){
-          try { console.log('%c◊·κ fall-sw', 'color:#c84a4a', 'SW registration failed: ' + e.message + ' (fine · fall-api still works via BroadcastChannel)'); } catch(_){}
-        });
-    } catch (e) {
-      try { console.log('%c◊·κ fall-sw', 'color:#c84a4a', 'SW unavailable: ' + e.message); } catch(_){}
-    }
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', registerSw, { once:true });
-  else registerSw();
-})();
-</script>
-<!-- /◊·κ FALL-SW SHIM -->
-
-<!-- ◊·κ FALL-HOT · watch canonical plugins · hot-reload without redeploy -->
-<script src="https://sjgant80-hub.github.io/fall-hot/fall-hot.js" defer></script>
-<script>
-  window.addEventListener('fall-hot:ready', function() {
-    window.fallHot.watch([
-      { name: 'fall-palette', url: 'https://sjgant80-hub.github.io/fall-palette/fall-palette.js' },
-      { name: 'fall-bloom',   url: 'https://sjgant80-hub.github.io/fall-bloom/bloom.js' }
-    ], { every: 5 * 60 * 1000 });
-  });
-</script>
-<!-- /◊·κ FALL-HOT -->
-
 </body>
 </html>
